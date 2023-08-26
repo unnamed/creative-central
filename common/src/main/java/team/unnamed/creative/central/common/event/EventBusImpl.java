@@ -23,55 +23,57 @@
  */
 package team.unnamed.creative.central.common.event;
 
+import org.jetbrains.annotations.Nullable;
 import team.unnamed.creative.central.event.Event;
 import team.unnamed.creative.central.event.EventListener;
 import team.unnamed.creative.central.event.EventBus;
 
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.TreeSet;
 
 import static java.util.Objects.requireNonNull;
 
 public final class EventBusImpl<T> implements EventBus {
 
-    private final Map<Class<?>, List<RegisteredEventListener<?>>> listenersByEventType = new HashMap<>();
+    private static final Comparator<RegisteredEventListener<?>> LISTENER_COMPARATOR = Comparator
+            .<RegisteredEventListener<?>>comparingInt(listener -> listener.listener().priority().ordinal())
+            .thenComparingInt(System::identityHashCode);
+
+    private final Map<Class<?>, Collection<RegisteredEventListener<?>>> listenersByEventType = new HashMap<>();
     private final Class<T> pluginClass;
+    private final EventExceptionHandler exceptionHandler;
 
-    private final Logger logger;
-
-    public EventBusImpl(Class<T> pluginClass, Logger logger) {
+    public EventBusImpl(Class<T> pluginClass, EventExceptionHandler exceptionHandler) {
         requireNonNull(pluginClass, "pluginClass");
-        requireNonNull(logger, "logger");
+        requireNonNull(exceptionHandler, "exceptionHandler");
         this.pluginClass = pluginClass;
-        this.logger = logger;
+        this.exceptionHandler = exceptionHandler;
     }
 
     @Override
-    public <E extends Event> void listen(Object plugin, Class<E> eventType, EventListener<E> listener) {
-        requireNonNull(plugin, "plugin");
+    public <E extends Event> void listen(@Nullable Object plugin, Class<E> eventType, EventListener<E> listener) {
         requireNonNull(eventType, "eventType");
         requireNonNull(listener, "listener");
 
-        if (!pluginClass.isInstance(plugin)) {
+        if (plugin != null && !pluginClass.isInstance(plugin)) {
             throw new IllegalArgumentException("Plugin is not an instance of " + pluginClass.getName());
         }
 
         RegisteredEventListener<E> registration = new RegisteredEventListener<>(plugin, listener);
 
         @SuppressWarnings({"unchecked", "rawtypes"})
-        List<RegisteredEventListener<E>> listeners = (List) listenersByEventType
-                .computeIfAbsent(eventType, k -> new LinkedList<>());
+        Collection<RegisteredEventListener<E>> listeners = (Collection) listenersByEventType
+                .computeIfAbsent(eventType, k -> new TreeSet<>(LISTENER_COMPARATOR));
         listeners.add(registration);
     }
 
     @Override
     public <E extends Event> void call(Class<E> eventType, E event) {
         @SuppressWarnings({"unchecked", "rawtypes"})
-        List<RegisteredEventListener<E>> listeners = (List) listenersByEventType.get(eventType);
+        Collection<RegisteredEventListener<E>> listeners = (Collection) listenersByEventType.get(eventType);
         if (listeners == null) {
             return;
         }
@@ -80,14 +82,7 @@ public final class EventBusImpl<T> implements EventBus {
             try {
                 listener.listener().on(event);
             } catch (Exception e) {
-                logger.log(
-                        Level.SEVERE,
-                        "Unhandled exception caught when calling event\n"
-                                + "    Event: " + eventType.getName() + "\n"
-                                + "    For listener: " + listener.listener() + "\n"
-                                + "    Of plugin: " + listener.plugin(),
-                        e
-                );
+                exceptionHandler.handleException(eventType, event, listener, e);
             }
         }
     }

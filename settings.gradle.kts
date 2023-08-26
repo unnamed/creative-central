@@ -7,6 +7,7 @@ rootProject.name = "creative-central-parent"
 includePrefixed("api")
 includePrefixed("common")
 includePrefixed("bukkit")
+includePrefixed("minestom")
 
 fun includePrefixed(name: String) {
     val kebabName = name.replace(':', '-')

@@ -21,29 +21,48 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package team.unnamed.creative.central.common.event;
+package team.unnamed.creative.central.common.config;
 
 import org.jetbrains.annotations.Nullable;
-import team.unnamed.creative.central.event.Event;
-import team.unnamed.creative.central.event.EventListener;
 
-public class RegisteredEventListener<E extends Event> {
+public class SendConfiguration {
 
-    private final @Nullable Object plugin;
-    private final EventListener<E> listener;
+    private final RequestConfiguration request = new RequestConfiguration();
+    private int delay = 0;
 
-    public RegisteredEventListener(@Nullable Object plugin, EventListener<E> listener) {
-        this.plugin = plugin;
-        this.listener = listener;
+    public RequestConfiguration request() {
+        return request;
     }
 
-    public @Nullable Object plugin() {
-        return plugin;
+    public void delay(int delay) {
+        this.delay = delay;
     }
 
-    public EventListener<E> listener() {
-        return listener;
+    public int delay() {
+        return delay;
     }
 
+    public static class RequestConfiguration {
+
+        private boolean required = true;
+        private @Nullable String prompt = "";
+
+        public void required(boolean required) {
+            this.required = required;
+        }
+
+        public boolean required() {
+            return required;
+        }
+
+        public void prompt(@Nullable String prompt) {
+            this.prompt = prompt;
+        }
+
+        public @Nullable String prompt() {
+            return prompt;
+        }
+
+    }
 
 }

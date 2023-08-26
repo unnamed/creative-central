@@ -23,16 +23,42 @@
  */
 package team.unnamed.creative.central.bukkit.util;
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.Nullable;
 
-public final class Components {
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 
-    private Components() {
+public final class PluginResources {
+
+    private PluginResources() {
     }
 
-    public static Component deserialize(String src) {
-        return MiniMessage.miniMessage().deserialize(src);
+    public static @Nullable InputStream get(Plugin plugin, String path) {
+        File file = new File(plugin.getDataFolder(), path);
+        if (!file.exists()) {
+            // file doesn't exist in the plugin's data folder,
+            // try to get it from the jar and copy it to the
+            // data folder
+            InputStream stream = plugin.getResource(path);
+            if (stream == null) {
+                // file doesn't exist in the jar either
+                return null;
+            }
+            plugin.saveResource(path, false);
+            return stream;
+        }
+
+        // file exists in the plugin's data folder,
+        // read the resource from there
+        try {
+            return new FileInputStream(file);
+        } catch (FileNotFoundException e) {
+            // should never happen
+            throw new IllegalStateException("File doesn't exist", e);
+        }
     }
 
 }

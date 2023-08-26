@@ -21,29 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package team.unnamed.creative.central.common.event;
+package team.unnamed.creative.central.common.action;
 
-import org.jetbrains.annotations.Nullable;
-import team.unnamed.creative.central.event.Event;
-import team.unnamed.creative.central.event.EventListener;
-
-public class RegisteredEventListener<E extends Event> {
-
-    private final @Nullable Object plugin;
-    private final EventListener<E> listener;
-
-    public RegisteredEventListener(@Nullable Object plugin, EventListener<E> listener) {
-        this.plugin = plugin;
-        this.listener = listener;
-    }
-
-    public @Nullable Object plugin() {
-        return plugin;
-    }
-
-    public EventListener<E> listener() {
-        return listener;
-    }
-
-
+public interface Action {
 }

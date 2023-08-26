@@ -21,13 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package team.unnamed.creative.central.bukkit.action;
+package team.unnamed.creative.central.common.action;
 
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.util.Ticks;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.entity.Player;
-import team.unnamed.creative.central.bukkit.util.Components;
+import team.unnamed.creative.central.common.util.Components;
 
 import java.util.Map;
 
@@ -41,17 +39,13 @@ public class TitleAction implements Action {
         this.title = title;
     }
 
-    @Override
-    public void execute(Player player) {
-        player.showTitle(title);
+    public Title title() {
+        return title;
     }
-
 
     public static Action deserialize(Object src) {
         @SuppressWarnings("unchecked")
-        Map<String, Object> data = src instanceof Map<?,?>
-                ? (Map<String, Object>) src
-                : ((ConfigurationSection) src).getValues(true);
+        Map<String, Object> data = (Map<String, Object>) src;
 
         return new TitleAction(Title.title(
                 Components.deserialize(data.getOrDefault("title", "").toString()),

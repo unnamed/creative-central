@@ -1,0 +1,13 @@
+{
+    "entrypoint": "team.unnamed.creative.central.minestom.CreativeCentralExtension",
+    "name": "creative-central",
+    "version": "${project.version}",
+    "externalDependencies": {
+        "repositories": [
+            { "name":  "Central", "url":  "https://repo1.maven.org/maven2/" }
+        ],
+        "artifacts": [
+            "org.yaml:snakeyaml:2.0"
+        ]
+    }
+}

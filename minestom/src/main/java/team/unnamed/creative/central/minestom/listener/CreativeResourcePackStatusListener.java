@@ -21,29 +21,37 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package team.unnamed.creative.central.common.event;
+package team.unnamed.creative.central.minestom.listener;
 
-import org.jetbrains.annotations.Nullable;
-import team.unnamed.creative.central.event.Event;
+import net.minestom.server.entity.Player;
+import team.unnamed.creative.central.common.action.Action;
+import team.unnamed.creative.central.common.config.Configuration;
+import team.unnamed.creative.central.common.util.Monitor;
 import team.unnamed.creative.central.event.EventListener;
+import team.unnamed.creative.central.event.pack.ResourcePackStatusEvent;
+import team.unnamed.creative.central.minestom.action.MinestomActionExecutor;
+import team.unnamed.creative.central.pack.ResourcePackStatus;
 
-public class RegisteredEventListener<E extends Event> {
+import java.util.Collections;
+import java.util.List;
 
-    private final @Nullable Object plugin;
-    private final EventListener<E> listener;
+public class CreativeResourcePackStatusListener implements EventListener<ResourcePackStatusEvent> {
 
-    public RegisteredEventListener(@Nullable Object plugin, EventListener<E> listener) {
-        this.plugin = plugin;
-        this.listener = listener;
+    private final Monitor<Configuration> config;
+
+    public CreativeResourcePackStatusListener(Monitor<Configuration> config) {
+        this.config = config;
     }
 
-    public @Nullable Object plugin() {
-        return plugin;
-    }
+    @Override
+    public void on(ResourcePackStatusEvent event) {
+        ResourcePackStatus status = event.status();
+        Player player = (Player) event.player();
 
-    public EventListener<E> listener() {
-        return listener;
+        List<Action> actions = config.get().feedback().getOrDefault(status, Collections.emptyList());
+        for (Action action : actions) {
+            MinestomActionExecutor.minestom().execute(action, player);
+        }
     }
-
 
 }

@@ -26,7 +26,6 @@ package team.unnamed.creative.central.bukkit;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
@@ -36,17 +35,22 @@ import org.jetbrains.annotations.Nullable;
 import team.unnamed.creative.ResourcePack;
 import team.unnamed.creative.central.CreativeCentral;
 import team.unnamed.creative.central.CreativeCentralProvider;
-import team.unnamed.creative.central.bukkit.action.ActionManager;
 import team.unnamed.creative.central.bukkit.command.MainCommand;
 import team.unnamed.creative.central.bukkit.listener.CreativeResourcePackStatusListener;
 import team.unnamed.creative.central.bukkit.listener.ResourcePackSendListener;
 import team.unnamed.creative.central.bukkit.listener.ResourcePackStatusListener;
 import team.unnamed.creative.central.bukkit.request.BukkitResourcePackRequestSender;
-import team.unnamed.creative.central.bukkit.util.Components;
+import team.unnamed.creative.central.bukkit.util.PluginResources;
+import team.unnamed.creative.central.common.config.Configuration;
+import team.unnamed.creative.central.common.config.ExportConfiguration;
+import team.unnamed.creative.central.common.config.YamlConfigurationLoader;
+import team.unnamed.creative.central.common.util.Components;
 import team.unnamed.creative.central.common.event.EventBusImpl;
+import team.unnamed.creative.central.common.event.EventExceptionHandler;
 import team.unnamed.creative.central.common.export.ResourcePackExporterFactory;
 import team.unnamed.creative.central.common.server.CommonResourcePackServer;
 import team.unnamed.creative.central.common.util.LocalAddressProvider;
+import team.unnamed.creative.central.common.util.Monitor;
 import team.unnamed.creative.central.common.util.Streams;
 import team.unnamed.creative.central.event.EventBus;
 import team.unnamed.creative.central.event.pack.ResourcePackGenerateEvent;
@@ -76,18 +80,21 @@ public final class CreativeCentralPlugin extends JavaPlugin implements CreativeC
     private ResourcePackRequestSender requestSender;
     private CentralResourcePackServer resourcePackServer;
 
+    private Monitor<Configuration> configurationMonitor;
+
     @Override
     public void onEnable() {
-        saveDefaultConfig();
+        Configuration config = YamlConfigurationLoader.load(PluginResources.get(this, "config.yml"));
+        this.configurationMonitor = Monitor.monitor(config);
 
         serveOptions = new ServeOptions();
-        eventBus = new EventBusImpl<>(Plugin.class, getLogger());
+        eventBus = new EventBusImpl<>(Plugin.class, EventExceptionHandler.logging(getLogger()));
         requestSender = BukkitResourcePackRequestSender.bukkit();
         resourcePackServer = new CommonResourcePackServer();
 
         // load serve/send options
         serveOptions.serve(true);
-        serveOptions.delay(getConfig().getInt("send.delay"));
+        serveOptions.delay(config.send().delay());
 
         // register event listeners
         listen(
@@ -103,10 +110,7 @@ public final class CreativeCentralPlugin extends JavaPlugin implements CreativeC
         command.setTabCompleter(mainCommandHandler);
 
         // load actions
-        ActionManager actionManager = new ActionManager();
-        ConfigurationSection feedbackSection = getConfig().getConfigurationSection("feedback");
-        actionManager.load(feedbackSection);
-        eventBus.listen(this, ResourcePackStatusEvent.class, new CreativeResourcePackStatusListener(actionManager));
+        eventBus.listen(this, ResourcePackStatusEvent.class, new CreativeResourcePackStatusListener(configurationMonitor));
 
         // start resource pack server if enabled
         loadResourcePackServer();
@@ -123,6 +127,10 @@ public final class CreativeCentralPlugin extends JavaPlugin implements CreativeC
         }, 1L);
     }
 
+    public Monitor<Configuration> config() {
+        return configurationMonitor;
+    }
+
     private void registerService() {
         Bukkit.getServicesManager().register(CreativeCentral.class, this, this, ServicePriority.High);
         CreativeCentralProvider.set(this);
@@ -134,22 +142,21 @@ public final class CreativeCentralPlugin extends JavaPlugin implements CreativeC
     }
 
     private void loadResourcePackServer() {
-        ConfigurationSection config = getConfig().getConfigurationSection("export.localhost");
-        boolean enabled = config != null && config.getBoolean("enabled");
+        ExportConfiguration.LocalHostExportConfiguration config = configurationMonitor.get().export().localHost();
 
-        if (!enabled) {
+        if (!config.enabled()) {
             return;
         }
 
         getLogger().info("Resource-pack server enabled, starting...");
 
-        String address = getConfig().getString("export.localhost.address", "");
-        int port = getConfig().getInt("export.localhost.port");
+        String address = config.address();
+        int port = config.port();
 
         // if address is empty, automatically detect the server's address
         if (address.trim().isEmpty()) {
             try {
-                address = LocalAddressProvider.getLocalAddress(getConfig().getStringList("--what-is-my-ip-services"));
+                address = LocalAddressProvider.getLocalAddress(configurationMonitor.get().whatIsMyIpServices());
             } catch (IOException e) {
                 getLogger().log(Level.SEVERE, "An exception was caught when trying to get the local server address", e);
             }
@@ -174,6 +181,8 @@ public final class CreativeCentralPlugin extends JavaPlugin implements CreativeC
             throw new IllegalStateException("Unexpected status, event bus was null when trying to" +
                     " generate the resource pack. Is the server shutting down?");
         }
+
+        Configuration config = configurationMonitor.get();
 
         getLogger().info("Generating resource-pack...");
 
@@ -227,7 +236,7 @@ public final class CreativeCentralPlugin extends JavaPlugin implements CreativeC
         @Nullable ResourcePackLocation location = null;
         {
             getLogger().info("Exporting resource pack...");
-            String exportType = getConfig().getString("export.type", "mcpacks");
+            String exportType = config.export().type();
             ResourcePackExporter exporter = ResourcePackExporterFactory.create(exportType, getDataFolder(), resourcePackServer, getLogger());
             try {
                 location = exporter.export(resourcePack);
@@ -240,8 +249,8 @@ public final class CreativeCentralPlugin extends JavaPlugin implements CreativeC
             serveOptions.request(ResourcePackRequest.of(
                     location.url(),
                     location.hash(),
-                    getConfig().getBoolean("send.request.required"),
-                    Components.deserialize(getConfig().getString("send.request.prompt", "prompt"))
+                    config.send().request().required(),
+                    Components.deserialize(config.send().request().prompt())
             ));
         } else {
             serveOptions.request(null);

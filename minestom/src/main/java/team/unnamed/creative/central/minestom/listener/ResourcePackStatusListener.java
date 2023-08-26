@@ -21,29 +21,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package team.unnamed.creative.central.common.event;
+package team.unnamed.creative.central.minestom.listener;
 
-import org.jetbrains.annotations.Nullable;
-import team.unnamed.creative.central.event.Event;
-import team.unnamed.creative.central.event.EventListener;
+import net.minestom.server.entity.Player;
+import net.minestom.server.event.player.PlayerResourcePackStatusEvent;
+import team.unnamed.creative.central.CreativeCentral;
+import team.unnamed.creative.central.event.pack.ResourcePackStatusEvent;
+import team.unnamed.creative.central.pack.ResourcePackStatus;
 
-public class RegisteredEventListener<E extends Event> {
+public class ResourcePackStatusListener {
 
-    private final @Nullable Object plugin;
-    private final EventListener<E> listener;
+    private final CreativeCentral central;
 
-    public RegisteredEventListener(@Nullable Object plugin, EventListener<E> listener) {
-        this.plugin = plugin;
-        this.listener = listener;
+    public ResourcePackStatusListener(CreativeCentral central) {
+        this.central = central;
     }
 
-    public @Nullable Object plugin() {
-        return plugin;
-    }
+    public void onResourcePackStatus(PlayerResourcePackStatusEvent minestomEvent) {
+        Player player = minestomEvent.getPlayer();
 
-    public EventListener<E> listener() {
-        return listener;
-    }
+        // convert bukkit status to creative status
+        ResourcePackStatus status = switch (minestomEvent.getStatus()) {
+            case ACCEPTED -> ResourcePackStatus.ACCEPTED;
+            case DECLINED -> ResourcePackStatus.DECLINED;
+            case FAILED_DOWNLOAD -> ResourcePackStatus.FAILED;
+            case SUCCESS -> ResourcePackStatus.LOADED;
+        };
 
+        central.eventBus().call(ResourcePackStatusEvent.class, new ResourcePackStatusEvent(player, status));
+    }
 
 }

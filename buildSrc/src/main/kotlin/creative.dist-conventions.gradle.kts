@@ -5,7 +5,7 @@ plugins {
 
 tasks {
     processResources {
-        filesMatching("**.yml") {
+        filesMatching(listOf("**plugin.yml", "**extension.json")) {
             expand("project" to project)
         }
     }
