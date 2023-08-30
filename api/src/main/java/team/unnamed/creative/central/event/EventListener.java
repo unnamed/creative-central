@@ -23,22 +23,51 @@
  */
 package team.unnamed.creative.central.event;
 
-import org.jetbrains.annotations.NotNull;
-
+/**
+ * Functional interface, called when the given {@code E}
+ * event is called/fired. All the event listeners must
+ * be registered in a {@link EventBus} in order to be
+ * executed.
+ *
+ * @param <E> The subscribed event type
+ * @see EventBus#call(Class, Event)
+ * @since 1.0.0
+ */
 @FunctionalInterface
-public interface EventListener<E extends Event> extends Comparable<EventListener<E>> {
+public interface EventListener<E extends Event> {
 
+    /**
+     * The functional method, executed when the provided
+     * {@code event} is called
+     *
+     * @param event The fired event
+     * @see EventBus#call(Class, Event)
+     * @since 1.0.0
+     */
     void on(E event);
 
+    /**
+     * Returns this event listener's priority.
+     *
+     * <p>Lowest priority = first, highest priority
+     * = last</p>
+     *
+     * @return This listener's priority
+     * @since 1.0.0
+     */
     default Priority priority() {
         return Priority.NORMAL;
     }
 
-    @Override
-    default int compareTo(@NotNull EventListener<E> o) {
-        return priority().compareTo(o.priority());
-    }
-
+    /**
+     * The priority of an {@link EventListener}.
+     *
+     * <p>Listeners with lowest priority are executed
+     * as first, listeners with highest priority are
+     * executed last.</p>
+     *
+     * @since 1.0.0
+     */
     enum Priority {
         LOWEST,
         LOW,

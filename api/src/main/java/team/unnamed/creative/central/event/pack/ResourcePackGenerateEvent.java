@@ -39,6 +39,12 @@ public final class ResourcePackGenerateEvent implements Event {
 
     private final ResourcePack resourcePack;
 
+    /**
+     * Instantiate a new {@link ResourcePackGenerateEvent}.
+     *
+     * @param resourcePack The resource-pack being generated
+     * @since 1.0.0
+     */
     public ResourcePackGenerateEvent(ResourcePack resourcePack) {
         this.resourcePack = requireNonNull(resourcePack, "resourcePack");
     }
@@ -49,6 +55,7 @@ public final class ResourcePackGenerateEvent implements Event {
      * listening to this event
      *
      * @return The resource pack
+     * @since 1.0.0
      */
     public ResourcePack resourcePack() {
         return resourcePack;

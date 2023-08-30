@@ -23,8 +23,10 @@
  */
 package team.unnamed.creative.central;
 
+import team.unnamed.creative.BuiltResourcePack;
 import team.unnamed.creative.ResourcePack;
 import team.unnamed.creative.central.event.EventBus;
+import team.unnamed.creative.central.event.pack.ResourcePackGenerateEvent;
 import team.unnamed.creative.central.request.ResourcePackRequestSender;
 import team.unnamed.creative.central.server.CentralResourcePackServer;
 import team.unnamed.creative.central.server.ServeOptions;
@@ -32,18 +34,44 @@ import team.unnamed.creative.central.server.ServeOptions;
 import java.util.concurrent.CompletableFuture;
 
 /**
+ * Main interface for the creative-central system
+ *
  * @since 1.0.0
  */
 public interface CreativeCentral {
+
+    /**
+     * Generates or re-generates the server's resource-pack.
+     *
+     * <p>This will fire the {@link ResourcePackGenerateEvent}
+     * event, making all the registered plugins add their
+     * resources into the resource-pack</p>
+     *
+     * <p>After the resource-pack is completed, it is built
+     * to a {@link BuiltResourcePack} and exported.</p>
+     *
+     * <p>If it was exported to somewhere we know the location
+     * (URL and Hash), the resource-pack is applied to all the
+     * online players</p>
+     *
+     * @return A completable future of the generated resource-pack
+     * @since 1.0.0
+     */
+    CompletableFuture<ResourcePack> generate();
+
+    /**
+     * Gets the {@link EventBus} instance used for everything
+     * within the creative-central system
+     *
+     * @return The held event bus instance
+     * @since 1.0.0
+     */
+    EventBus eventBus();
 
     CentralResourcePackServer server();
 
     ServeOptions serveOptions();
 
     ResourcePackRequestSender requestSender();
-
-    EventBus eventBus();
-
-    CompletableFuture<ResourcePack> generate();
 
 }

@@ -23,9 +23,68 @@
  */
 package team.unnamed.creative.central.pack;
 
+import team.unnamed.creative.central.request.ResourcePackRequest;
+
+/**
+ * The status of a resource-pack in a Minecraft client.
+ * Status are responses to {@link ResourcePackRequest}s
+ * that were been sent to players.
+ *
+ * @since 1.0.0
+ */
 public enum ResourcePackStatus {
+
+    /**
+     * Means that the player just accepted the server's
+     * resource-pack.
+     *
+     * <p>Sent when the player clicks the 'Accept' button
+     * when they are asked to use the server's resource-pack</p>
+     *
+     * <p>Also sent when the player already accepted the
+     * server's resource-pack and just joined the server.
+     * (they are not asked twice)</p>
+     *
+     * @since 1.0.0
+     */
+    ACCEPTED,
+
+    /**
+     * Means that the player just finished loading the
+     * server's resource-pack.
+     *
+     * <p>Commonly sent a little bit after the
+     * {@link ResourcePackStatus#ACCEPTED} status is sent</p>
+     *
+     * @since 1.0.0
+     */
     LOADED,
+
+    /**
+     * Means that the player declined the server's
+     * resource-pack.
+     *
+     * <p>Similar to {@link ResourcePackStatus#ACCEPTED},
+     * this status is sent when the player clicks the
+     * 'Reject' button when they are asked to use the
+     * server's resource-pack. Or when they have already
+     * rejected the resource-pack and just joined the
+     * server.</p>
+     *
+     * @since 1.0.0
+     */
     DECLINED,
-    FAILED,
-    ACCEPTED
+
+    /**
+     * Means that the player failed to download the
+     * server's resource-pack.
+     *
+     * <p>This could mean multiple things like, an
+     * invalid URL was sent, or an invalid resource-pack
+     * was sent.</p>
+     *
+     * @since 1.0.0
+     */
+    FAILED
+
 }
