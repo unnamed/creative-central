@@ -1,0 +1,58 @@
+/*
+ * This file is part of creative, licensed under the MIT license
+ *
+ * Copyright (c) 2021-2023 Unnamed Team
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+package team.unnamed.creative.central.minestom.command;
+
+import net.minestom.server.command.builder.Command;
+import net.minestom.server.command.builder.arguments.ArgumentType;
+import net.minestom.server.permission.Permission;
+import net.minestom.server.utils.entity.EntityFinder;
+
+public class MainCommand extends Command {
+
+    private static final Permission HELP_COMMAND_PERMISSION = new Permission("creative-central.command.help");
+    private static final Permission RELOAD_COMMAND_PERMISSION = new Permission("creative-central.command.reload");
+    private static final Permission APPLY_COMMAND_PERMISSION = new Permission("creative-central.command.apply");
+    private static final Permission APPLY_OTHERS_COMMAND_PERMISSION = new Permission("creative-central.command.apply.others");
+
+    public MainCommand() {
+        super("central");
+
+        addSyntax((sender, context) -> {
+        }, ArgumentType.Literal("reload"));
+
+        var targetArgument = ArgumentType.Entity("target")
+                .singleEntity(false)
+                .onlyPlayers(true)
+                .setDefaultValue(new EntityFinder()
+                        .setTargetSelector(EntityFinder.TargetSelector.SELF));
+        addSyntax((sender, context) -> {
+
+        }, ArgumentType.Literal("apply"), targetArgument);
+
+        setDefaultExecutor((sender, context) ->
+            sender.sendMessage("Unknown subcommand.")
+        );
+    }
+
+}

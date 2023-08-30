@@ -21,29 +21,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package team.unnamed.creative.central.common.event;
+package team.unnamed.creative.central.common.util;
 
-import org.jetbrains.annotations.Nullable;
-import team.unnamed.creative.central.event.Event;
-import team.unnamed.creative.central.event.EventListener;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.function.BiConsumer;
 
-public class RegisteredEventListener<E extends Event> {
+import static java.util.Objects.requireNonNull;
 
-    private final @Nullable Object plugin;
-    private final EventListener<E> listener;
+public final class Monitor<T> {
 
-    public RegisteredEventListener(@Nullable Object plugin, EventListener<E> listener) {
-        this.plugin = plugin;
-        this.listener = listener;
+    private T value;
+    private final Set<BiConsumer<T, T>> listeners = Collections.synchronizedSet(new HashSet<>());
+
+    private Monitor(T initialValue) {
+        this.value = requireNonNull(initialValue, "initialValue");
     }
 
-    public @Nullable Object plugin() {
-        return plugin;
+    public synchronized T get() {
+        return value;
     }
 
-    public EventListener<E> listener() {
-        return listener;
+    public synchronized void set(T value) {
+        T oldValue = this.value;
+        this.value = value;
+        listeners.forEach(listener -> listener.accept(oldValue, value));
     }
 
+    public synchronized void onChange(BiConsumer<T, T> listener) {
+        requireNonNull(listener, "listener");
+        listeners.add(listener);
+    }
+
+    public static <T> Monitor<T> monitor(T initialValue) {
+        return new Monitor<>(initialValue);
+    }
 
 }

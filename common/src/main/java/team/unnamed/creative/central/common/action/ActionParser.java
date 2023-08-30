@@ -21,9 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package team.unnamed.creative.central.bukkit.action;
-
-import org.bukkit.configuration.ConfigurationSection;
+package team.unnamed.creative.central.common.action;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,8 +31,8 @@ import java.util.Map;
 
 public class ActionParser {
 
-    public static List<Action> parse(ConfigurationSection section, String key) {
-        List<?> rawActions = section.getList(key);
+    public static List<Action> parse(Object object) {
+        List<?> rawActions = (List<?>) object;
         if (rawActions == null) {
             // no actions with this key
             return Collections.emptyList();
@@ -43,10 +41,6 @@ public class ActionParser {
         for (Object rawAction : rawActions) {
             String actionId;
             Object actionData;
-
-            if (rawAction instanceof ConfigurationSection) {
-                rawAction = ((ConfigurationSection) rawAction).getValues(true);
-            }
 
             if (rawAction instanceof Map<?,?>) {
                 @SuppressWarnings("unchecked")
@@ -78,12 +72,24 @@ public class ActionParser {
                 );
             }
 
-            actions.add(switch (actionId.toLowerCase(Locale.ROOT)) {
-                case KickAction.IDENTIFIER -> KickAction.deserialize(actionData);
-                case MessageAction.IDENTIFIER -> MessageAction.deserialize(actionData);
-                case TitleAction.IDENTIFIER -> TitleAction.deserialize(actionData);
-                default -> throw new IllegalArgumentException("Unknown action identifier: " + actionId);
-            });
+            Action action;
+            switch (actionId.toLowerCase(Locale.ROOT)) {
+                case KickAction.IDENTIFIER: {
+                    action = KickAction.deserialize(actionData);
+                    break;
+                }
+                case MessageAction.IDENTIFIER: {
+                    action = MessageAction.deserialize(actionData);
+                    break;
+                }
+                case TitleAction.IDENTIFIER: {
+                    action = TitleAction.deserialize(actionData);
+                    break;
+                }
+                default:
+                    throw new IllegalArgumentException("Unknown action identifier: " + actionId);
+            }
+            actions.add(action);
         }
         return actions;
     }

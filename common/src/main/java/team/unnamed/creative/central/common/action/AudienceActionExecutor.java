@@ -21,29 +21,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package team.unnamed.creative.central.common.event;
+package team.unnamed.creative.central.common.action;
 
-import org.jetbrains.annotations.Nullable;
-import team.unnamed.creative.central.event.Event;
-import team.unnamed.creative.central.event.EventListener;
+import net.kyori.adventure.audience.Audience;
 
-public class RegisteredEventListener<E extends Event> {
+public abstract class AudienceActionExecutor<T extends Audience> implements ActionExecutor<T> {
 
-    private final @Nullable Object plugin;
-    private final EventListener<E> listener;
-
-    public RegisteredEventListener(@Nullable Object plugin, EventListener<E> listener) {
-        this.plugin = plugin;
-        this.listener = listener;
+    @Override
+    public void execute(Action action, T target) {
+        if (action instanceof MessageAction) {
+            target.sendMessage(((MessageAction) action).message());
+        } else if (action instanceof TitleAction) {
+            target.showTitle(((TitleAction) action).title());
+        }
     }
-
-    public @Nullable Object plugin() {
-        return plugin;
-    }
-
-    public EventListener<E> listener() {
-        return listener;
-    }
-
 
 }

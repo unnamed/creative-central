@@ -29,13 +29,12 @@ import team.unnamed.creative.central.event.EventBus;
 import team.unnamed.creative.central.event.EventListener;
 
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.logging.Logger;
 
 public class EventBusTest {
 
     @Test
     public void test_listener_is_called() {
-        EventBus eventBus = new EventBusImpl<>(Object.class, Logger.getLogger("TestLogger"));
+        EventBus eventBus = new EventBusImpl<>(Object.class, EventExceptionHandler.empty());
         Object plugin1 = new Object();
 
         AtomicBoolean wasCalled = new AtomicBoolean(false);
@@ -47,13 +46,13 @@ public class EventBusTest {
 
     @Test
     public void test_listeners_are_called_in_order() {
-        EventBus eventBus = new EventBusImpl<>(Object.class, Logger.getLogger("TestLogger 2"));
+        EventBus eventBus = new EventBusImpl<>(Object.class, EventExceptionHandler.empty());
         Object plugin1 = new Object();
 
         eventBus.listen(plugin1, TestEvent.class, EventListener.Priority.LOWEST, event -> event.assertAndIncrement(0));
+        eventBus.listen(plugin1, TestEvent.class, EventListener.Priority.HIGH, event -> event.assertAndIncrement(3));
         eventBus.listen(plugin1, TestEvent.class, EventListener.Priority.LOW, event -> event.assertAndIncrement(1));
         eventBus.listen(plugin1, TestEvent.class, EventListener.Priority.NORMAL, event -> event.assertAndIncrement(2));
-        eventBus.listen(plugin1, TestEvent.class, EventListener.Priority.HIGH, event -> event.assertAndIncrement(3));
         eventBus.listen(plugin1, TestEvent.class, EventListener.Priority.HIGHEST, event -> event.assertAndIncrement(4));
 
         TestEvent event = new TestEvent();
@@ -63,11 +62,7 @@ public class EventBusTest {
 
     @Test
     public void test_an_exception_doesnt_stop_others() {
-        // configure logger so the test exceptions don't show in the console
-        Logger logger = Logger.getLogger("TestLogger 3");
-        logger.setUseParentHandlers(false);
-
-        EventBus eventBus = new EventBusImpl<>(Object.class, logger);
+        EventBus eventBus = new EventBusImpl<>(Object.class, EventExceptionHandler.empty());
         Object plugin1 = new Object();
 
         // this listener will not fail

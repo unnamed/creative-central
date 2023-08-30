@@ -21,29 +21,55 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package team.unnamed.creative.central.common.event;
+package team.unnamed.creative.central.common.config;
 
-import org.jetbrains.annotations.Nullable;
-import team.unnamed.creative.central.event.Event;
-import team.unnamed.creative.central.event.EventListener;
+public class ExportConfiguration {
 
-public class RegisteredEventListener<E extends Event> {
+    private String type = "mcpacks";
+    private LocalHostExportConfiguration localHost = new LocalHostExportConfiguration();
 
-    private final @Nullable Object plugin;
-    private final EventListener<E> listener;
-
-    public RegisteredEventListener(@Nullable Object plugin, EventListener<E> listener) {
-        this.plugin = plugin;
-        this.listener = listener;
+    public String type() {
+        return type;
     }
 
-    public @Nullable Object plugin() {
-        return plugin;
+    public void type(String type) {
+        this.type = type;
     }
 
-    public EventListener<E> listener() {
-        return listener;
+    public LocalHostExportConfiguration localHost() {
+        return localHost;
     }
 
+    public static class LocalHostExportConfiguration {
+
+        private boolean enabled = false;
+        private String address = "";
+        private int port = 7270;
+
+        public boolean enabled() {
+            return enabled;
+        }
+
+        public void enabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public String address() {
+            return address;
+        }
+
+        public void address(String address) {
+            this.address = address;
+        }
+
+        public int port() {
+            return port;
+        }
+
+        public void port(int port) {
+            this.port = port;
+        }
+
+    }
 
 }

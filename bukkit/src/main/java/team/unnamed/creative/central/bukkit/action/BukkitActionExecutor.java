@@ -23,27 +23,31 @@
  */
 package team.unnamed.creative.central.bukkit.action;
 
-import org.bukkit.configuration.ConfigurationSection;
-import team.unnamed.creative.central.pack.ResourcePackStatus;
+import org.bukkit.entity.Player;
+import team.unnamed.creative.central.common.action.Action;
+import team.unnamed.creative.central.common.action.ActionExecutor;
+import team.unnamed.creative.central.common.action.AudienceActionExecutor;
+import team.unnamed.creative.central.common.action.KickAction;
 
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
+public final class BukkitActionExecutor extends AudienceActionExecutor<Player> {
 
-public class ActionManager {
+    private static final ActionExecutor<Player> INSTANCE = new BukkitActionExecutor();
 
-    private final Map<ResourcePackStatus, List<Action>> actionsByStatus = new EnumMap<>(ResourcePackStatus.class);
-
-    public void load(ConfigurationSection config) {
-        actionsByStatus.put(ResourcePackStatus.DECLINED, ActionParser.parse(config, "declined"));
-        actionsByStatus.put(ResourcePackStatus.ACCEPTED, ActionParser.parse(config, "accepted"));
-        actionsByStatus.put(ResourcePackStatus.FAILED, ActionParser.parse(config, "failed"));
-        actionsByStatus.put(ResourcePackStatus.LOADED, ActionParser.parse(config, "success"));
+    private BukkitActionExecutor() {
     }
 
-    public List<Action> actions(ResourcePackStatus status) {
-        return actionsByStatus.getOrDefault(status, Collections.emptyList());
+    @Override
+    public void execute(Action action, Player player) {
+        super.execute(action, player);
+        if (action instanceof KickAction kickAction) {
+            player.kick(kickAction.reason());
+        } else {
+            throw new IllegalArgumentException("Unknown action type: '" + action + "'");
+        }
+    }
+
+    public static ActionExecutor<Player> bukkit() {
+        return INSTANCE;
     }
 
 }

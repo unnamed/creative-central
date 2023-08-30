@@ -21,29 +21,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package team.unnamed.creative.central.bukkit.action;
+package team.unnamed.creative.central.common.action;
 
 import net.kyori.adventure.text.Component;
-import org.bukkit.entity.Player;
-import team.unnamed.creative.central.bukkit.util.Components;
+import team.unnamed.creative.central.common.util.Components;
 
-public class KickAction implements Action {
+public class MessageAction implements Action {
 
-    public static final String IDENTIFIER = "kick";
+    public static final String IDENTIFIER = "message";
 
-    private final Component reason;
+    private final Component message;
 
-    public KickAction(Component reason) {
-        this.reason = reason;
+    public MessageAction(Component message) {
+        this.message = message;
     }
 
-    @Override
-    public void execute(Player player) {
-        player.kick(reason);
+    public Component message() {
+        return message;
     }
 
     public static Action deserialize(Object src) {
-        return new KickAction(Components.deserialize(src.toString()));
+        return new MessageAction(Components.deserialize(src.toString()));
     }
 
 }

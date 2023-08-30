@@ -21,12 +21,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package team.unnamed.creative.central.bukkit.action;
+package team.unnamed.creative.central.common.util;
 
-import org.bukkit.entity.Player;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 
-public interface Action {
+public final class Components {
 
-    void execute(Player player);
+    private Components() {
+    }
+
+    public static Component deserialize(String src) {
+        return MiniMessage.miniMessage().deserialize(src);
+    }
 
 }

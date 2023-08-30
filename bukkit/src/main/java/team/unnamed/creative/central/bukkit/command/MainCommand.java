@@ -32,7 +32,7 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 import team.unnamed.creative.central.bukkit.CreativeCentralPlugin;
-import team.unnamed.creative.central.bukkit.util.Components;
+import team.unnamed.creative.central.common.util.Components;
 import team.unnamed.creative.central.request.ResourcePackRequest;
 
 import javax.annotation.ParametersAreNonnullByDefault;

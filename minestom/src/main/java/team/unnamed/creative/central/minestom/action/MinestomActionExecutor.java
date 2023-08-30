@@ -21,29 +21,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package team.unnamed.creative.central.bukkit.action;
+package team.unnamed.creative.central.minestom.action;
 
-import net.kyori.adventure.text.Component;
-import org.bukkit.entity.Player;
-import team.unnamed.creative.central.bukkit.util.Components;
+import net.minestom.server.entity.Player;
+import team.unnamed.creative.central.common.action.*;
 
-public class MessageAction implements Action {
+public final class MinestomActionExecutor extends AudienceActionExecutor<Player> {
 
-    public static final String IDENTIFIER = "message";
+    private static final ActionExecutor<Player> INSTANCE = new MinestomActionExecutor();
 
-    private final Component message;
-
-    public MessageAction(Component message) {
-        this.message = message;
+    private MinestomActionExecutor() {
     }
 
     @Override
-    public void execute(Player player) {
-        player.sendMessage(message);
+    public void execute(Action action, Player player) {
+        super.execute(action, player);
+
+        if (action instanceof KickAction kickAction) {
+            player.kick(kickAction.reason());
+        } else {
+            throw new IllegalArgumentException("Unknown action type: '" + action + "'");
+        }
     }
 
-    public static Action deserialize(Object src) {
-        return new MessageAction(Components.deserialize(src.toString()));
+    public static ActionExecutor<Player> minestom() {
+        return INSTANCE;
     }
 
 }

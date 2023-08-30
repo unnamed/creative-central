@@ -21,29 +21,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package team.unnamed.creative.central.common.event;
+package team.unnamed.creative.central.common.action;
 
-import org.jetbrains.annotations.Nullable;
-import team.unnamed.creative.central.event.Event;
-import team.unnamed.creative.central.event.EventListener;
+import net.kyori.adventure.text.Component;
+import team.unnamed.creative.central.common.util.Components;
 
-public class RegisteredEventListener<E extends Event> {
+public class KickAction implements Action {
 
-    private final @Nullable Object plugin;
-    private final EventListener<E> listener;
+    public static final String IDENTIFIER = "kick";
 
-    public RegisteredEventListener(@Nullable Object plugin, EventListener<E> listener) {
-        this.plugin = plugin;
-        this.listener = listener;
+    private final Component reason;
+
+    public KickAction(Component reason) {
+        this.reason = reason;
     }
 
-    public @Nullable Object plugin() {
-        return plugin;
+    public Component reason() {
+        return reason;
     }
 
-    public EventListener<E> listener() {
-        return listener;
+    public static Action deserialize(Object src) {
+        return new KickAction(Components.deserialize(src.toString()));
     }
-
 
 }
