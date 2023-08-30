@@ -3,6 +3,6 @@ plugins {
 }
 
 dependencies {
-    api("team.unnamed:creative-api:$version")
-    api("net.kyori:adventure-api:4.13.1")
+    api(libs.creative.api)
+    api(libs.adventure.api)
 }
