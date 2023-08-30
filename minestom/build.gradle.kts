@@ -7,8 +7,7 @@ repositories {
 }
 
 dependencies {
-
-    implementation("team.unnamed:creative-serializer-minecraft:$version")
+    implementation(libs.creative.serializer.minecraft)
     implementation(project(":creative-central-api"))
     implementation(project(":creative-central-common"))
     compileOnly("com.github.Minestom:Minestom:4f7ff5b474")

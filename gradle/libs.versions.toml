@@ -4,4 +4,7 @@ adventure = "4.14.0"
 
 [libraries]
 creative-api = { group = "team.unnamed", name = "creative-api", version.ref = "creative" }
+creative-serializer-minecraft = { group = "team.unnamed", name = "creative-serializer-minecraft", version.ref = "creative" }
+creative-server = { group = "team.unnamed", name = "creative-server", version.ref = "creative" }
 adventure-api = { group = "net.kyori", name = "adventure-api", version.ref = "adventure" }
+adventure-text-minimessage = { group = "net.kyori", name = "adventure-text-minimessage", version.ref = "adventure" }
