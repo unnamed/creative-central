@@ -81,7 +81,7 @@ public class CreativeCentralExtension extends Extension implements CreativeCentr
         getEventNode().addListener(PlayerResourcePackStatusEvent.class, statusListener::onResourcePackStatus);
 
         // register our command
-        MinecraftServer.getCommandManager().register(new MainCommand());
+        MinecraftServer.getCommandManager().register(new MainCommand(this));
 
         // load actions
         eventBus.listen(this, ResourcePackStatusEvent.class, new CreativeResourcePackStatusListener(configMonitor));

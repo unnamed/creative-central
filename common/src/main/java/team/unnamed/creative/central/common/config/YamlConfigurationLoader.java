@@ -29,6 +29,7 @@ import team.unnamed.creative.central.pack.ResourcePackStatus;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -54,14 +55,16 @@ public class YamlConfigurationLoader {
         Configuration config = new Configuration();
 
         // read the 'send' section
-        Map<String, ?> send = (Map<String, ?>) data.get("send");
-        Map<String, ?> request = (Map<String, ?>) send.get("request");
+        Map<String, Object> send = (Map<String, Object>) data.get("send");
+        Map<String, Object> request = (Map<String, Object>) send.get("request");
         config.send().request().required((boolean) request.get("required"));
         config.send().request().prompt((String) request.get("required"));
         config.send().delay((int) send.get("delay"));
 
         // read the feedback section
-        Map<String, ?> feedback = (Map<String, ?>) data.get("feedback");
+        Map<String, ?> feedback = data.containsKey("feedback")
+                ? (Map<String, ?>) data.get("feedback")
+                : Collections.emptyMap();
         for (Map.Entry<String, ?> entry : feedback.entrySet()) {
             String statusKey = entry.getKey();
             ResourcePackStatus status;
@@ -87,9 +90,9 @@ public class YamlConfigurationLoader {
         }
 
         // read the export section
-        Map<String, ?> export = (Map<String, ?>) data.get("export");
+        Map<String, Object> export = (Map<String, Object>) data.get("export");
         config.export().type((String) export.get("type"));
-        Map<String, ?> localhost = (Map<String, ?>) export.get("localhost");
+        Map<String, Object> localhost = (Map<String, Object>) export.get("localhost");
         config.export().localHost().enabled((boolean) localhost.get("enabled"));
         config.export().localHost().address((String) localhost.get("address"));
         config.export().localHost().port((int) localhost.get("port"));
