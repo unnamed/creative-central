@@ -58,7 +58,7 @@ public class YamlConfigurationLoader {
         Map<String, Object> send = (Map<String, Object>) data.get("send");
         Map<String, Object> request = (Map<String, Object>) send.get("request");
         config.send().request().required((boolean) request.get("required"));
-        config.send().request().prompt((String) request.get("required"));
+        config.send().request().prompt((String) request.get("prompt"));
         config.send().delay((int) send.get("delay"));
 
         // read the feedback section
