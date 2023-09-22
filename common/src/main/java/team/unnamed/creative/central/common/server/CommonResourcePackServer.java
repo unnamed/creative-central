@@ -34,8 +34,6 @@ import team.unnamed.creative.server.ResourcePackServer;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-import static java.util.Objects.requireNonNull;
-
 public final class CommonResourcePackServer implements CentralResourcePackServer, ResourcePackRequestHandler {
 
     private @Nullable ResourcePackServer server;
@@ -61,12 +59,13 @@ public final class CommonResourcePackServer implements CentralResourcePackServer
     }
 
     @Override
-    public void open(String address, int port) throws IOException {
+    public void open(String address, String publicUrlFormat, int port) throws IOException {
         if (open) {
             throw new IllegalStateException("The resource pack server is already open!");
         }
 
         this.address = address;
+        this.publicUrlFormat = publicUrlFormat;
         this.port = port;
         this.open = true;
 

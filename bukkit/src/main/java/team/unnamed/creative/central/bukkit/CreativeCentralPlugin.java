@@ -151,6 +151,7 @@ public final class CreativeCentralPlugin extends JavaPlugin implements CreativeC
         getLogger().info("Resource-pack server enabled, starting...");
 
         String address = config.address();
+        String publicUrlFormat = config.publicUrlFormat();
         int port = config.port();
 
         // if address is empty, automatically detect the server's address
@@ -168,7 +169,7 @@ public final class CreativeCentralPlugin extends JavaPlugin implements CreativeC
 
         if (address != null) {
             try {
-                resourcePackServer.open(address, port);
+                resourcePackServer.open(address, publicUrlFormat, port);
                 getLogger().info("Successfully started the resource-pack server, listening on port " + port);
             } catch (IOException e) {
                 getLogger().log(Level.SEVERE, "Failed to open the resource pack server", e);
