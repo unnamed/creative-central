@@ -171,6 +171,7 @@ export:
     # Configuration for locally hosting resource packs
     localhost:
         # True to enable and start the HTTP server, false to disable it
+        # (Disabled by default)
         #
         # IMPORTANT: Note that setting the export type to 'localhost' will not
         # automatically enable the HTTP server, you need to set this to true
@@ -178,11 +179,32 @@ export:
 
         # Put your server's public IP address or let the plugin
         # detect it by using an external "what is my ip" service
+        # (Empty by default)
         # (See the --what-is-my-ip-services setting)
         address: ''
 
-        # The resource pack host port
+        # The resource pack host port (7270 by default)
         port: 7270
+
+        #
+        # The public URL format, this is the URL that players receive when
+        # they are requested to download the resource-pack.
+        #
+        # The value MUST be a FORMAT STRING (See https://docs.oracle.com/javase/8/docs/api/java/util/Formatter.html)
+        # The arguments are the address (that you provided above), port (that you also
+        #  provided above), and the resource-pack hash (computed by the plugin)
+        #
+        # You can use this as replacements:
+        #   %1$s -> address
+        #   %2$s -> port
+        #   %3$s -> hash
+        #
+        # Default: 'http://%s:%s/%s.zip'
+        # Some valid examples:
+        # -    http://mycustomurl.unnamed.team/%3$s.zip
+        # -    http://%s:%s/resource-pack-%s.zip
+        #
+        public-url-format: 'http://%s:%s/%s.zip'
 
 
 

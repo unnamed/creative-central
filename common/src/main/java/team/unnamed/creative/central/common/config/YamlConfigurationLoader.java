@@ -95,6 +95,7 @@ public class YamlConfigurationLoader {
         Map<String, Object> localhost = (Map<String, Object>) export.get("localhost");
         config.export().localHost().enabled((boolean) localhost.get("enabled"));
         config.export().localHost().address((String) localhost.get("address"));
+        config.export().localHost().publicUrlFormat((String) localhost.get("public-url-format"));
         config.export().localHost().port((int) localhost.get("port"));
 
         // read the "command" section (messages)

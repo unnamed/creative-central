@@ -39,6 +39,8 @@ public interface CentralResourcePackServer extends Closeable {
 
     void open(String address, int port) throws IOException;
 
+    String publicUrlFormat();
+
     @Nullable String address();
 
     int port();

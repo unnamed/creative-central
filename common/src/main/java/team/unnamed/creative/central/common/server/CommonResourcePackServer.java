@@ -40,6 +40,7 @@ public final class CommonResourcePackServer implements CentralResourcePackServer
 
     private @Nullable ResourcePackServer server;
     private @Nullable String address;
+    private @Nullable String publicUrlFormat;
     private int port = -1;
     private @Nullable BuiltResourcePack resourcePack;
     private boolean open;
@@ -84,6 +85,11 @@ public final class CommonResourcePackServer implements CentralResourcePackServer
     @Override
     public int port() {
         return port;
+    }
+
+    @Override
+    public @Nullable String publicUrlFormat() {
+        return publicUrlFormat;
     }
 
     @Override

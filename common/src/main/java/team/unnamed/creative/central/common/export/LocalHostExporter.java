@@ -59,9 +59,11 @@ public class LocalHostExporter implements ResourcePackExporter {
 
         server.resourcePack(pack);
 
-        // Example:
-        // http://127.0.0.1:7270/f69deb4e77d2c6820b39652f63e6deceb87ba13d.zip
-        String url = "http://" + server.address() + ':' + server.port() + '/' + pack.hash() + ".zip";
+        // Examples:
+        // - http://127.0.0.1:7270/f69deb4e77d2c6820b39652f63e6deceb87ba13d.zip
+        // - https://resourcepack.unnamed.team/f69deb4e77d2c6820b39652f63e6deceb87ba13d.zip
+        // - http://rp.unnamed.team/f69deb4e77d2c6820b39652f63e6deceb87ba13d.zip
+        String url = String.format(server.publicUrlFormat(), server.address(), server.port(), pack.hash());
 
         logger.info("Resource-pack hosted, available in: " + url);
 
