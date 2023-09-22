@@ -28,12 +28,16 @@ import net.kyori.adventure.audience.Audience;
 public abstract class AudienceActionExecutor<T extends Audience> implements ActionExecutor<T> {
 
     @Override
-    public void execute(Action action, T target) {
+    public final void execute(Action action, T target) {
         if (action instanceof MessageAction) {
             target.sendMessage(((MessageAction) action).message());
         } else if (action instanceof TitleAction) {
             target.showTitle(((TitleAction) action).title());
+        } else {
+            executeAction(action, target);
         }
     }
+
+    protected abstract void executeAction(Action action, T target);
 
 }

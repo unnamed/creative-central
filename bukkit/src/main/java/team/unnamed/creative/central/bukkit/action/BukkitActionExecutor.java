@@ -37,8 +37,7 @@ public final class BukkitActionExecutor extends AudienceActionExecutor<Player> {
     }
 
     @Override
-    public void execute(Action action, Player player) {
-        super.execute(action, player);
+    public void executeAction(Action action, Player player) {
         if (action instanceof KickAction kickAction) {
             player.kick(kickAction.reason());
         } else {
