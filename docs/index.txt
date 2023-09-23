@@ -1,4 +1,8 @@
 creative-central.md
 commands.md
+custom-resources.md
+resource-pack-prompt.md
+actions.md
+resource-pack-exporting.md
 api-introduction.md
 api-usage.md
