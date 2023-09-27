@@ -75,7 +75,7 @@ public class EventBusTest {
         });
 
         // this listener will not fail and should be called
-        eventBus.listen(plugin1, TestEvent.class, EventListener.Priority.NORMAL, event -> event.assertAndIncrement(1));
+        eventBus.listen(plugin1, TestEvent.class, EventListener.Priority.HIGH, event -> event.assertAndIncrement(1));
 
         TestEvent event = new TestEvent();
         eventBus.call(TestEvent.class, event);
