@@ -1,0 +1,4 @@
+custom-resources.md
+resource-pack-prompt.md
+actions.md
+resource-pack-exporting.md

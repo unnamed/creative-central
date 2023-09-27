@@ -1,4 +1,4 @@
-## Resource Pack Exporting/Hosting
+## Pack Exporting/Hosting
 
 `creative-central` relies on collecting the required assets *(textures, assets,
 fonts, etc.)* on the server start-up, **compile** the resource-pack and then **export**

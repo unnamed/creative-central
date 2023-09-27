@@ -30,4 +30,4 @@ soon we will support non-strict JSON syntax (supporting comments)*
 There is also the `pack.png` file, it is optional and you can replace it by your own
 resource-pack icon, the recommended size is 64x64px.
 
-![Pack in Resource Pack Selection Screen](../.github/pack-in-resource-pack-selection.png)
+![Pack in Resource Pack Selection Screen](../../.github/pack-in-resource-pack-selection.png)

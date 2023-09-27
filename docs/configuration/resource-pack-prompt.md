@@ -39,7 +39,7 @@ sending the resource pack to the player. Set to zero or less to send immediately
 ### And that's it!
 Now when you join your server, you should see a screen like this:
 
-![Resource Pack Prompt Screen](../.github/resource-pack-prompt.png)
+![Resource Pack Prompt Screen](../../.github/resource-pack-prompt.png)
 
 And please note that, the Minecraft client will remember the player's choice, so
 the screen will appear only once. If you want to be asked again, do the following:
