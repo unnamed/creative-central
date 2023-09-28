@@ -10,7 +10,7 @@ dependencies {
     implementation(libs.creative.serializer.minecraft)
     implementation(project(":creative-central-api"))
     implementation(project(":creative-central-common"))
-    compileOnly("io.papermc.paper:paper-api:1.19.3-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT")
 }
 
 java {
