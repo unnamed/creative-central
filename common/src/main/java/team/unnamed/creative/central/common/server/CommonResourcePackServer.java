@@ -38,7 +38,7 @@ public final class CommonResourcePackServer implements CentralResourcePackServer
 
     private @Nullable ResourcePackServer server;
     private @Nullable String address;
-    private @Nullable String publicUrlFormat;
+    private @Nullable String publicAddress;
     private int port = -1;
     private @Nullable BuiltResourcePack resourcePack;
     private boolean open;
@@ -59,13 +59,13 @@ public final class CommonResourcePackServer implements CentralResourcePackServer
     }
 
     @Override
-    public void open(String address, String publicUrlFormat, int port) throws IOException {
+    public void open(String address, String publicAddress, int port) throws IOException {
         if (open) {
             throw new IllegalStateException("The resource pack server is already open!");
         }
 
         this.address = address;
-        this.publicUrlFormat = publicUrlFormat;
+        this.publicAddress = publicAddress;
         this.port = port;
         this.open = true;
 
@@ -87,8 +87,8 @@ public final class CommonResourcePackServer implements CentralResourcePackServer
     }
 
     @Override
-    public @Nullable String publicUrlFormat() {
-        return publicUrlFormat;
+    public @Nullable String publicAddress() {
+        return publicAddress;
     }
 
     @Override

@@ -1,4 +1,4 @@
-## Developer API Introduction
+## API Introduction
 
 ### Adding central to your project
 The first step to using `creative-central` is to add it to your project, you can do

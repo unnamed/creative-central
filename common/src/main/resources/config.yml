@@ -177,34 +177,20 @@ export:
         # automatically enable the HTTP server, you need to set this to true
         enabled: false
 
-        # Put your server's public IP address or let the plugin
-        # detect it by using an external "what is my ip" service
-        # (Empty by default)
-        # (See the --what-is-my-ip-services setting)
+        # The address that the resource-pack server should use, in most
+        # cases, you can just put your server's public IP address.
+        # If you leave this option empty, the plugin will automatically detect
+        #   your server's public API address by using a "what is my ip" service
         address: ''
 
         # The resource pack host port (7270 by default)
         port: 7270
 
-        #
-        # The public URL format, this is the URL that players receive when
-        # they are requested to download the resource-pack.
-        #
-        # The value MUST be a FORMAT STRING (See https://docs.oracle.com/javase/8/docs/api/java/util/Formatter.html)
-        # The arguments are the address (that you provided above), port (that you also
-        #  provided above), and the resource-pack hash (computed by the plugin)
-        #
-        # You can use this as replacements:
-        #   %1$s -> address
-        #   %2$s -> port
-        #   %3$s -> hash
-        #
-        # Default: 'http://%s:%s/%s.zip'
-        # Some valid examples:
-        # -    http://mycustomurl.unnamed.team/%3$s.zip
-        # -    http://%s:%s/resource-pack-%s.zip
-        #
-        public-url-format: 'http://%s:%s/%s.zip'
+        # The public address for the resource-pack server, this is the address
+        # sent to the players when they are asked to download the server's
+        # resource-pack.
+        # If you leave this option empty, it will take the same value as "address"
+        public-address: ''
 
 
 

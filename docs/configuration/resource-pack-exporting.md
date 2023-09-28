@@ -46,8 +46,8 @@ export:
     address: ''
     # The port to use
     port: 7270
-    # The public URL format
-    public-url-format: 'http://%s:%s/%s.zip'
+    # The public address
+    public-address: ''
 ```
 
 The settings you may want to modify now are:
@@ -55,14 +55,12 @@ The settings you may want to modify now are:
 empty, the plugin will automatically detect your server's public IP address, however,
 if you want to skip the detection, you can manually set it too. *Note: If you use
 NAT (Network Address Translation), set this to `0.0.0.0` and pay extra attention to
-the `public-url-format` setting explanation*
+the `public-address` setting explanation*
 - `port`: The port that the resource-pack server will use. **It can't be the same as
 your Minecraft server's port!**
-- `public-url-format`: The format for the download link sent to players when they
-are requested to download the resource-pack. For most cases, you don't have to modify
-this setting. *By default, it will format URLs like "http\://ADDRESS:PORT/HASH.zip",
-however, if you use NAT, you will have to use your public's address or domain, like:
-`http://MYADDRESS:%2$s/%3$s.zip`*
+- `public-address`: The public address, sent to players to ask them to download the
+server's resource pack. *If you use NAT, you will have to set your public's address
+or domain*
 
 ### File
 Export the resource-pack to a ZIP file! However, this export type is **not hosted**,

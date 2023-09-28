@@ -43,7 +43,7 @@ public class ExportConfiguration {
     public static class LocalHostExportConfiguration {
 
         private boolean enabled = false;
-        private String publicUrlFormat = "http://%s:%s/%s.zip";
+        private String publicAddress = "";
         private String address = "";
         private int port = 7270;
 
@@ -55,12 +55,12 @@ public class ExportConfiguration {
             this.enabled = enabled;
         }
 
-        public String publicUrlFormat() {
-            return publicUrlFormat;
+        public String publicAddress() {
+            return publicAddress;
         }
 
-        public void publicUrlFormat(String publicUrlFormat) {
-            this.publicUrlFormat = publicUrlFormat;
+        public void publicAddress(String publicAddress) {
+            this.publicAddress = publicAddress;
         }
 
         public String address() {

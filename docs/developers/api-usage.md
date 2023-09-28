@@ -1,4 +1,4 @@
-## Developer API Usage
+## API Usage
 
 Now that we have a `CreativeCentral` instance, we can use it to subscribe to
 events, fire the resource-pack generate event, etc.
