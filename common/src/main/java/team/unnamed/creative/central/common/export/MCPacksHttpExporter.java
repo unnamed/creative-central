@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.DigestOutputStream;
@@ -133,7 +134,7 @@ public class MCPacksHttpExporter implements ResourcePackExporter {
         String url = DOWNLOAD_URL_TEMPLATE.replace("%HASH%", hashString);
         logger.info("Uploaded resource-pack to: " + url);
 
-        return ResourcePackLocation.of(url, hashString);
+        return ResourcePackLocation.of(URI.create(url), hashString);
     }
 
     private char hex(int c) {

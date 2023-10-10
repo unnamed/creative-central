@@ -23,28 +23,45 @@
  */
 package team.unnamed.creative.central.export;
 
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
+
+import java.net.URI;
+
 import static java.util.Objects.requireNonNull;
 
 public final class ResourcePackLocation {
 
-    private final String url;
+    private final URI uri;
     private final String hash;
 
-    private ResourcePackLocation(String url, String hash) {
-        this.url = requireNonNull(url, "url");
+    private ResourcePackLocation(URI uri, String hash) {
+        this.uri = requireNonNull(uri, "url");
         this.hash = requireNonNull(hash, "hash");
     }
 
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.0.0")
     public String url() {
-        return url;
+        return uri.toString();
+    }
+
+    public @NotNull URI uri() {
+        return uri;
     }
 
     public String hash() {
         return hash;
     }
 
-    public static ResourcePackLocation of(String url, String hash) {
-        return new ResourcePackLocation(url, hash);
+    public static @NotNull ResourcePackLocation of(final @NotNull URI uri, final @NotNull String hash) {
+        return new ResourcePackLocation(uri, hash);
+    }
+
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.0.0")
+    public static @NotNull ResourcePackLocation of(String url, String hash) {
+        return new ResourcePackLocation(URI.create(url), hash);
     }
 
 }

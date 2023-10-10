@@ -252,7 +252,7 @@ public final class CreativeCentralPlugin extends JavaPlugin implements CreativeC
 
         if (location != null) {
             serveOptions.request(ResourcePackRequest.of(
-                    location.url(),
+                    location.uri(),
                     location.hash(),
                     config.send().request().required(),
                     Components.deserialize(config.send().request().prompt())

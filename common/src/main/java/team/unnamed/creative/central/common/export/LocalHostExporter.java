@@ -31,6 +31,7 @@ import team.unnamed.creative.central.export.ResourcePackLocation;
 import team.unnamed.creative.central.server.CentralResourcePackServer;
 import team.unnamed.creative.serialize.minecraft.MinecraftResourcePackWriter;
 
+import java.net.URI;
 import java.util.logging.Logger;
 
 public class LocalHostExporter implements ResourcePackExporter {
@@ -59,16 +60,16 @@ public class LocalHostExporter implements ResourcePackExporter {
 
         server.resourcePack(pack);
 
-        String url = String.format(
+        URI uri = URI.create(String.format(
                 "http://%s:%s/%s.zip",
                 server.publicAddress(),
                 server.port(),
                 pack.hash()
-        );
+        ));
 
-        logger.info("Resource-pack hosted, available in: " + url);
+        logger.info("Resource-pack hosted, available in: " + uri.toString());
 
-        return ResourcePackLocation.of(url, pack.hash());
+        return ResourcePackLocation.of(uri, pack.hash());
     }
 
 }

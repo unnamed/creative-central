@@ -24,7 +24,11 @@
 package team.unnamed.creative.central.request;
 
 import net.kyori.adventure.text.Component;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.net.URI;
 
 import static java.util.Objects.requireNonNull;
 
@@ -36,20 +40,20 @@ import static java.util.Objects.requireNonNull;
  */
 public final class ResourcePackRequest {
 
-    private final String url;
+    private final URI uri;
     private final String hash;
     private final boolean required;
     private final @Nullable Component prompt;
 
     private ResourcePackRequest(
-            String url,
-            String hash,
-            boolean required,
-            @Nullable Component prompt
+            final @NotNull URI uri,
+            final @NotNull String hash,
+            final boolean required,
+            final @Nullable Component prompt
     ) {
-        requireNonNull(url, "url");
+        requireNonNull(uri, "url");
         requireNonNull(hash, "hash");
-        this.url = url;
+        this.uri = uri;
         this.hash = hash;
         this.required = required;
         this.prompt = prompt;
@@ -61,8 +65,14 @@ public final class ResourcePackRequest {
      *
      * @return The resource-pack URL
      */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.0.0")
     public String url() {
-        return url;
+        return uri.toString();
+    }
+
+    public @NotNull URI uri() {
+        return uri;
     }
 
     /**
@@ -96,15 +106,28 @@ public final class ResourcePackRequest {
         return prompt;
     }
 
+    public static @NotNull ResourcePackRequest of(
+            final @NotNull URI uri,
+            final @NotNull String hash,
+            final boolean required,
+            final @Nullable Component prompt
+    ) {
+        return new ResourcePackRequest(uri, hash, required, prompt);
+    }
+
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.0.0")
     public static ResourcePackRequest of(
             String url,
             String hash,
             boolean required,
             @Nullable Component prompt
     ) {
-        return new ResourcePackRequest(url, hash, required, prompt);
+        return of(URI.create(url), hash, required, prompt);
     }
 
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.0.0")
     public static ResourcePackRequest of(String url, String hash, boolean required) {
         return of(url, hash, required, null);
     }
@@ -115,7 +138,7 @@ public final class ResourcePackRequest {
 
     public static final class Builder {
 
-        private String url;
+        private URI uri;
         private String hash;
         private boolean required;
         private @Nullable Component prompt;
@@ -123,8 +146,15 @@ public final class ResourcePackRequest {
         private Builder() {
         }
 
+        @Deprecated
+        @ApiStatus.ScheduledForRemoval(inVersion = "2.0.0")
         public Builder url(String url) {
-            this.url = url;
+            this.uri = URI.create(url);
+            return this;
+        }
+
+        public @NotNull Builder uri(final @NotNull URI uri) {
+            this.uri = requireNonNull(uri, "uri");
             return this;
         }
 
@@ -144,7 +174,7 @@ public final class ResourcePackRequest {
         }
 
         public ResourcePackRequest build() {
-            return new ResourcePackRequest(url, hash, required, prompt);
+            return new ResourcePackRequest(uri, hash, required, prompt);
         }
 
 

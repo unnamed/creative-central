@@ -54,7 +54,7 @@ public final class BukkitResourcePackRequestSender implements ResourcePackReques
             // Method that accepts: URL, Hash, Required and Prompt options,
             // available since Paper 1.17 (We are currently on 1.20)
             return new BukkitResourcePackRequestSender((player, request) -> player.setResourcePack(
-                    request.url(),
+                    request.uri().toString(),
                     request.hash(),
                     request.required(),
                     request.prompt()
@@ -65,7 +65,7 @@ public final class BukkitResourcePackRequestSender implements ResourcePackReques
             // Method that accepts URL and Hash options
             // available since Paper 1.12 and probably before too
             return new BukkitResourcePackRequestSender((player, request) -> player.setResourcePack(
-                    request.url(),
+                    request.uri().toString(),
                     request.hash()
             ));
         }
@@ -87,7 +87,7 @@ public final class BukkitResourcePackRequestSender implements ResourcePackReques
                 }
 
                 // now call the stupid method
-                player.setResourcePack(request.url(), hash);
+                player.setResourcePack(request.uri().toString(), hash);
             });
         }
 

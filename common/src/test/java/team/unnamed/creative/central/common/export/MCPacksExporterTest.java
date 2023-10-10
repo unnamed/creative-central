@@ -30,7 +30,7 @@ import team.unnamed.creative.central.export.ResourcePackLocation;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.net.URL;
+import java.net.URI;
 import java.security.DigestOutputStream;
 import java.security.MessageDigest;
 import java.util.logging.Logger;
@@ -50,15 +50,15 @@ class MCPacksExporterTest {
                 .export(resourcePack);
 
         assertNotNull(location, "Location should not be null");
-        assertEquals("https://download.mc-packs.net/pack/7c708abe63955fefc2ff1fca614688874b9bd3f0.zip", location.url());
+        assertEquals("https://download.mc-packs.net/pack/7c708abe63955fefc2ff1fca614688874b9bd3f0.zip", location.uri().toString());
         assertEquals("7c708abe63955fefc2ff1fca614688874b9bd3f0", location.hash());
 
         // download the resource-pack from MCPacks
-        URL url = new URL(location.url());
+        URI uri = location.uri();
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         MessageDigest digest = MessageDigest.getInstance("SHA-1");
         DigestOutputStream digestOutputStream = new DigestOutputStream(bos, digest);
-        try (InputStream input = url.openStream()) {
+        try (InputStream input = uri.toURL().openStream()) {
             Streams.pipe(input, digestOutputStream);
         }
         // byte[] bytes = bos.toByteArray();

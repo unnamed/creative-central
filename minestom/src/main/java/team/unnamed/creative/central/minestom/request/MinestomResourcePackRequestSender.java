@@ -42,7 +42,7 @@ public final class MinestomResourcePackRequestSender implements ResourcePackRequ
             throw new IllegalArgumentException("Provided 'player' is not an actual Minestom Player: " + playerObject);
         }
 
-        String url = request.url();
+        String url = request.uri().toString();
         String hash = request.hash();
         Component prompt = request.prompt();
 
