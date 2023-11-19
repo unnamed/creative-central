@@ -24,12 +24,13 @@
 package team.unnamed.creative.central.common.server;
 
 import com.sun.net.httpserver.HttpExchange;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import team.unnamed.creative.BuiltResourcePack;
 import team.unnamed.creative.central.server.CentralResourcePackServer;
-import team.unnamed.creative.server.ResourcePackRequest;
-import team.unnamed.creative.server.ResourcePackRequestHandler;
 import team.unnamed.creative.server.ResourcePackServer;
+import team.unnamed.creative.server.handler.ResourcePackRequestHandler;
+import team.unnamed.creative.server.request.ResourcePackDownloadRequest;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -69,7 +70,7 @@ public final class CommonResourcePackServer implements CentralResourcePackServer
         this.port = port;
         this.open = true;
 
-        server = ResourcePackServer.builder()
+        server = ResourcePackServer.server()
                 .address(address, port)
                 .handler(this)
                 .build();
@@ -92,8 +93,7 @@ public final class CommonResourcePackServer implements CentralResourcePackServer
     }
 
     @Override
-    public void onRequest(@Nullable ResourcePackRequest request, HttpExchange exchange) throws IOException {
-
+    public void onRequest(final @Nullable ResourcePackDownloadRequest request, final @NotNull HttpExchange exchange) throws IOException {
         if (resourcePack == null) {
             byte[] response = "The resource-pack is not loaded yet, please wait...".getBytes(StandardCharsets.UTF_8);
             exchange.getResponseHeaders().set("Content-Type", "text/plain");
@@ -102,15 +102,10 @@ public final class CommonResourcePackServer implements CentralResourcePackServer
             return;
         }
 
-        byte[] data = resourcePack.bytes();
+        final byte[] data = resourcePack.data().toByteArray();
         exchange.getResponseHeaders().set("Content-Type", "application/zip");
         exchange.sendResponseHeaders(200, data.length);
         exchange.getResponseBody().write(data);
-    }
-
-    @Override
-    public void onInvalidRequest(HttpExchange exchange) throws IOException {
-        onRequest(null, exchange);
     }
 
     @Override
