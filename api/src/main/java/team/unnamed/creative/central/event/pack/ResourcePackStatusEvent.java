@@ -23,6 +23,7 @@
  */
 package team.unnamed.creative.central.event.pack;
 
+import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.central.event.Event;
 import team.unnamed.creative.central.pack.ResourcePackStatus;
 
@@ -36,7 +37,6 @@ import static java.util.Objects.requireNonNull;
  * @since 1.0.0
  */
 public final class ResourcePackStatusEvent implements Event {
-
     private final Object player;
     private final ResourcePackStatus status;
 
@@ -47,7 +47,7 @@ public final class ResourcePackStatusEvent implements Event {
      * @param status The resource-pack status
      * @since 1.0.0
      */
-    public ResourcePackStatusEvent(Object player, ResourcePackStatus status) {
+    public ResourcePackStatusEvent(final @NotNull Object player, final @NotNull ResourcePackStatus status) {
         this.player = requireNonNull(player, "player");
         this.status = requireNonNull(status, "status");
     }
@@ -59,7 +59,7 @@ public final class ResourcePackStatusEvent implements Event {
      * @return The player object.
      * @since 1.0.0
      */
-    public Object player() {
+    public @NotNull Object player() {
         return player;
     }
 
@@ -70,7 +70,7 @@ public final class ResourcePackStatusEvent implements Event {
      * @since 1.0.0
      * @see ResourcePackStatus
      */
-    public ResourcePackStatus status() {
+    public @NotNull ResourcePackStatus status() {
         return status;
     }
 
@@ -81,5 +81,4 @@ public final class ResourcePackStatusEvent implements Event {
                 ", status=" + status +
                 '}';
     }
-
 }
