@@ -8,6 +8,7 @@ website: https://unnamed.team/docs/creative/central/creative-central
 libraries:
     - net.kyori:adventure-api:4.14.0
     - net.kyori:adventure-text-minimessage:4.14.0
+    - net.kyori:adventure-text-serializer-legacy:4.14.0
 commands:
     central:
         description: The central main command, used to manage the plugin
