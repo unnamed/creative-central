@@ -54,7 +54,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
     }
 
     @Override
-    @ParametersAreNonnullByDefault
+    @ParametersAreNonnullByDefault // not available in Minecraft 1.8.8
     public boolean onCommand(
             CommandSender sender,
             Command command,

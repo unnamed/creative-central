@@ -37,6 +37,18 @@ import team.unnamed.creative.central.common.action.TitleAction;
 public final class BukkitActionExecutor implements ActionExecutor<Player> {
     private static final ActionExecutor<Player> INSTANCE = new BukkitActionExecutor();
 
+    private static final boolean ARE_TITLE_TIMES_AVAILABLE;
+
+    static {
+        boolean areTitleTimesAvailable = false;
+        try {
+            Player.class.getMethod("sendTitle", String.class, String.class, int.class, int.class, int.class);
+            areTitleTimesAvailable = true;
+        } catch (final NoSuchMethodException ignored) {
+        }
+        ARE_TITLE_TIMES_AVAILABLE = areTitleTimesAvailable;
+    }
+
     private BukkitActionExecutor() {
     }
 
@@ -48,7 +60,7 @@ public final class BukkitActionExecutor implements ActionExecutor<Player> {
         } else if (action instanceof TitleAction) {
             final Title title = ((TitleAction) action).title();
             final Title.Times times = title.times();
-            if (times == null) {
+            if (times == null || !ARE_TITLE_TIMES_AVAILABLE) {
                 player.sendTitle(
                         toLegacy(title.title()),
                         toLegacy(title.subtitle())

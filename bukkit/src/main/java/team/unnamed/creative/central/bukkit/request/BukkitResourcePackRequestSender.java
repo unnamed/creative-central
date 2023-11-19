@@ -91,6 +91,14 @@ public final class BukkitResourcePackRequestSender implements ResourcePackReques
             });
         }
 
+        if (isSetResourcePackOverrideAvailable(String.class)) {
+            // Method that accepts URL option only
+            // This is ancient! Available in Spigot 1.8.8
+            return new BukkitResourcePackRequestSender((player, request) -> player.setResourcePack(
+                    request.uri().toString()
+            ));
+        }
+
         throw new IllegalStateException("No supported setResourcePack method found on Player!");
     }
 
