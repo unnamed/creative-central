@@ -23,6 +23,7 @@
  */
 package team.unnamed.creative.central.event.pack;
 
+import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.ResourcePack;
 import team.unnamed.creative.central.event.Event;
 
@@ -36,8 +37,24 @@ import static java.util.Objects.requireNonNull;
  * @since 1.0.0
  */
 public final class ResourcePackGenerateEvent implements Event {
+    private static final int ANY_FORMAT = -1;
 
     private final ResourcePack resourcePack;
+    private final int format;
+
+    /**
+     * Instantiate a new {@link ResourcePackGenerateEvent}.
+     *
+     * @param format The expected format that the resource pack
+     *               should be generated in, or {@code -1}
+     *               if any format is accepted
+     * @param resourcePack The resource-pack being generated
+     * @since 1.0.0
+     */
+    public ResourcePackGenerateEvent(final int format, final @NotNull ResourcePack resourcePack) {
+        this.format = format;
+        this.resourcePack = requireNonNull(resourcePack, "resourcePack");
+    }
 
     /**
      * Instantiate a new {@link ResourcePackGenerateEvent}.
@@ -45,8 +62,8 @@ public final class ResourcePackGenerateEvent implements Event {
      * @param resourcePack The resource-pack being generated
      * @since 1.0.0
      */
-    public ResourcePackGenerateEvent(ResourcePack resourcePack) {
-        this.resourcePack = requireNonNull(resourcePack, "resourcePack");
+    public ResourcePackGenerateEvent(final @NotNull ResourcePack resourcePack) {
+        this(ANY_FORMAT, resourcePack);
     }
 
     /**
@@ -57,8 +74,44 @@ public final class ResourcePackGenerateEvent implements Event {
      * @return The resource pack
      * @since 1.0.0
      */
-    public ResourcePack resourcePack() {
+    public @NotNull ResourcePack resourcePack() {
         return resourcePack;
     }
 
+    /**
+     * Returns the expected format that the resource pack
+     * should be generated in, or {@link #ANY_FORMAT} if
+     * any format is accepted (or format has not been
+     * specified)
+     *
+     * @return The expected format
+     * @since 1.0.0
+     */
+    public int format() {
+        return format;
+    }
+
+    /**
+     * Returns whether the resource pack should be
+     * generated in any format.
+     *
+     * @return Whether the resource pack should be
+     * generated in any format
+     * @since 1.0.0
+     */
+    public boolean isAnyFormat() {
+        return format == ANY_FORMAT;
+    }
+
+    /**
+     * Returns whether the resource pack should be
+     * generated in the specified format.
+     *
+     * @param format The format to check
+     * @return Whether the resource pack should be
+     * generated in the specified format
+     */
+    public boolean isFormat(final int format) {
+        return this.format == format || isAnyFormat();
+    }
 }
