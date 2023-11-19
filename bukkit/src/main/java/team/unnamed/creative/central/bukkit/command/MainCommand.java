@@ -32,6 +32,7 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 import team.unnamed.creative.central.bukkit.CreativeCentralPlugin;
+import team.unnamed.creative.central.bukkit.util.Messages;
 import team.unnamed.creative.central.common.util.Components;
 import team.unnamed.creative.central.request.ResourcePackRequest;
 
@@ -182,7 +183,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
     private void send(CommandSender sender, String messageKey) {
         Component message = messageCache.computeIfAbsent(messageKey, k ->
                 Components.deserialize(central.getConfig().getString(k, k)));
-        sender.sendMessage(message);
+        Messages.send(sender, message);
     }
 
 }
