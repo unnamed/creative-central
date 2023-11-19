@@ -23,7 +23,6 @@
  */
 package team.unnamed.creative.central.bukkit;
 
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
@@ -213,7 +212,7 @@ public final class CreativeCentralPlugin extends JavaPlugin implements CreativeC
 
         ResourcePack resourcePack = resourcesFolder.exists()
                 ? MinecraftResourcePackReader.minecraft().readFromDirectory(resourcesFolder)
-                : ResourcePack.create();
+                : ResourcePack.resourcePack();
 
         // process the pack meta
         {
@@ -221,13 +220,10 @@ public final class CreativeCentralPlugin extends JavaPlugin implements CreativeC
             if (meta == null) {
                 getLogger().warning("Couldn't find pack metadata in the generated resource-pack");
             } else {
-                // TODO: We do this because creative doesn't support components for descriptions yet
-                String description = meta.description();
-                String legacyColoredDescription = LegacyComponentSerializer.legacySection()
-                        .serialize(Components.deserialize(description));
                 resourcePack.packMeta(
-                        meta.format(),
-                        legacyColoredDescription
+                        meta.formats().format(),
+                        // reprocess description using MiniMessage
+                        Components.deserialize(meta.description())
                 );
             }
         }
