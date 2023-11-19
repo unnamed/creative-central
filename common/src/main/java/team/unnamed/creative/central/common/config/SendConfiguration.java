@@ -1,5 +1,5 @@
 /*
- * This file is part of creative, licensed under the MIT license
+ * This file is part of creative-central, licensed under the MIT license
  *
  * Copyright (c) 2021-2023 Unnamed Team
  *
