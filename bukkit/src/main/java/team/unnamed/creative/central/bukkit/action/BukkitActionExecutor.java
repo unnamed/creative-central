@@ -23,30 +23,57 @@
  */
 package team.unnamed.creative.central.bukkit.action;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.title.Title;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.central.common.action.Action;
 import team.unnamed.creative.central.common.action.ActionExecutor;
-import team.unnamed.creative.central.common.action.AudienceActionExecutor;
 import team.unnamed.creative.central.common.action.KickAction;
+import team.unnamed.creative.central.common.action.MessageAction;
+import team.unnamed.creative.central.common.action.TitleAction;
 
-public final class BukkitActionExecutor extends AudienceActionExecutor<Player> {
-
+public final class BukkitActionExecutor implements ActionExecutor<Player> {
     private static final ActionExecutor<Player> INSTANCE = new BukkitActionExecutor();
 
     private BukkitActionExecutor() {
     }
 
     @Override
-    public void executeAction(Action action, Player player) {
-        if (action instanceof KickAction kickAction) {
-            player.kick(kickAction.reason());
+    @SuppressWarnings({"deprecation", "UsagesOfObsoleteApi"}) // Spigot!
+    public void execute(Action action, Player player) {
+        if (action instanceof MessageAction) {
+            player.sendMessage(toLegacy(((MessageAction) action).message()));
+        } else if (action instanceof TitleAction) {
+            final Title title = ((TitleAction) action).title();
+            final Title.Times times = title.times();
+            if (times == null) {
+                player.sendTitle(
+                        toLegacy(title.title()),
+                        toLegacy(title.subtitle())
+                );
+            } else {
+                player.sendTitle(
+                        toLegacy(title.title()),
+                        toLegacy(title.subtitle()),
+                        (int) times.fadeIn().getSeconds() * 20,
+                        (int) times.stay().getSeconds() * 20,
+                        (int) times.fadeOut().getSeconds() * 20
+                );
+            }
+        } else if (action instanceof KickAction kickAction) {
+            player.kickPlayer(toLegacy(kickAction.reason()));
         } else {
             throw new IllegalArgumentException("Unknown action type: '" + action + "'");
         }
     }
 
+    private static @NotNull String toLegacy(final @NotNull Component component) {
+        return LegacyComponentSerializer.legacySection().serialize(component);
+    }
+
     public static ActionExecutor<Player> bukkit() {
         return INSTANCE;
     }
-
 }

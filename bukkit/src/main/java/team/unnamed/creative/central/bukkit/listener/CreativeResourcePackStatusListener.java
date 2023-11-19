@@ -25,7 +25,9 @@ package team.unnamed.creative.central.bukkit.listener;
 
 import org.bukkit.entity.Player;
 import team.unnamed.creative.central.bukkit.action.BukkitActionExecutor;
+import team.unnamed.creative.central.bukkit.action.PaperActionExecutor;
 import team.unnamed.creative.central.common.action.Action;
+import team.unnamed.creative.central.common.action.ActionExecutor;
 import team.unnamed.creative.central.common.config.Configuration;
 import team.unnamed.creative.central.common.util.Monitor;
 import team.unnamed.creative.central.event.EventListener;
@@ -38,9 +40,13 @@ import java.util.List;
 public class CreativeResourcePackStatusListener implements EventListener<ResourcePackStatusEvent> {
 
     private final Monitor<Configuration> config;
+    private final ActionExecutor<Player> actionExecutor;
 
     public CreativeResourcePackStatusListener(Monitor<Configuration> config) {
         this.config = config;
+        this.actionExecutor = PaperActionExecutor.isAvailable()
+                ? PaperActionExecutor.paper()
+                : BukkitActionExecutor.bukkit();
     }
 
     @Override
@@ -50,7 +56,7 @@ public class CreativeResourcePackStatusListener implements EventListener<Resourc
 
         List<Action> actions = config.get().feedback().getOrDefault(status, Collections.emptyList());
         for (Action action : actions) {
-            BukkitActionExecutor.bukkit().execute(action, player);
+            actionExecutor.execute(action, player);
         }
     }
 
