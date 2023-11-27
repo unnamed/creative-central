@@ -4,6 +4,7 @@ plugins {
 
 repositories {
     maven("https://repo.papermc.io/repository/maven-public/")
+    maven("https://mvn.lumine.io/repository/maven-public/") // Model Engine
 }
 
 dependencies {
@@ -11,6 +12,8 @@ dependencies {
     implementation(project(":creative-central-api"))
     implementation(project(":creative-central-common"))
     compileOnly("io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT")
+
+    compileOnly("com.ticxo.modelengine:ModelEngine:R4.0.3") // Model Engine
 }
 
 java {
