@@ -219,6 +219,7 @@ public final class CreativeCentralPlugin extends JavaPlugin implements CreativeC
                 });
             }, 1L);
         } else  {
+            getLogger().info("Waiting on " + awaitingProviders.size() + " external resource-pack providers to finish generating...");
             final var awaitingResourcePackCountDown = new AtomicInteger(awaitingProviders.size());
             for (final var provider : awaitingProviders) {
                 provider.listenForChanges(this, () -> {
@@ -232,14 +233,14 @@ public final class CreativeCentralPlugin extends JavaPlugin implements CreativeC
                         } else {
                             // this means that the change on this provider was made
                             // DURING the first generation
-                            getLogger().info(provider.pluginName() + " resource-pack loaded, importing into ours...");
+                            getLogger().info(provider.pluginName() + " finished generating its resource-pack...");
 
                             // will be true if this is the last provider to be loaded
                             generatePack = awaitingResourcePackCountDown.decrementAndGet() == 0;
                         }
 
                         if (generatePack) {
-                            getLogger().info("All external resource-packs loaded, generating our resource-pack...");
+                            getLogger().info("All external resource-packs finished generating...");
                             Bukkit.getScheduler().runTaskLater(this, () -> {
                                 this.generate().whenComplete((pack, throwable) -> {
                                     if (throwable != null) {
