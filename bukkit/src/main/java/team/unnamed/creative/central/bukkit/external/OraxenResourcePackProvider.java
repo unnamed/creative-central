@@ -68,6 +68,6 @@ public final class OraxenResourcePackProvider implements ExternalResourcePackPro
         if (!oraxenPack.exists()) {
             return null;
         }
-        return MinecraftResourcePackReader.minecraft().readFromDirectory(oraxenPack);
+        return MinecraftResourcePackReader.minecraft().readFromZipFile(oraxenPack);
     }
 }
