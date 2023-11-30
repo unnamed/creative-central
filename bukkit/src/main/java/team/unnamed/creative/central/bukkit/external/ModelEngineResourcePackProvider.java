@@ -28,22 +28,49 @@ import com.ticxo.modelengine.api.events.ModelRegistrationEvent;
 import com.ticxo.modelengine.api.generator.ModelGenerator;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import team.unnamed.creative.ResourcePack;
 import team.unnamed.creative.serialize.minecraft.MinecraftResourcePackReader;
 
 import java.io.File;
 
-public final class ModelEngineResourcePack implements Listener {
-    @EventHandler
-    public void onLoad(final @NotNull ModelRegistrationEvent event) {
-        final var phase = event.getPhase();
-        if (phase == ModelGenerator.Phase.POST_ZIPPING) {
-            // ModelEngine resource pack has been zipped, we can load it
-            // into our own resource pack
-            final var resourcePackZipFile = new File(ModelEngineAPI.getAPI().getDataFolder(), "resource pack.zip");
-            final var resourcePack = MinecraftResourcePackReader.minecraft().readFromZipFile(resourcePackZipFile);
+import static java.util.Objects.requireNonNull;
 
-            // todo: merge resource pack
+public final class ModelEngineResourcePackProvider implements ExternalResourcePackProvider {
+    @Override
+    public @NotNull String pluginName() {
+        return "ModelEngine";
+    }
+
+    @Override
+    public boolean awaitOnStart() {
+        // ModelEngine generates its resource-pack on startup
+        return true;
+    }
+
+    @Override
+    public void listenForChanges(final @NotNull Plugin plugin, final @NotNull Runnable changeListener) {
+        requireNonNull(plugin, "plugin");
+        requireNonNull(changeListener, "changeListener");
+        plugin.getServer().getPluginManager().registerEvents(new Listener() {
+            @EventHandler
+            public void onModelRegistration(final @NotNull ModelRegistrationEvent event) {
+                final var phase = event.getPhase();
+                if (phase == ModelGenerator.Phase.POST_ZIPPING) {
+                    changeListener.run();
+                }
+            }
+        }, plugin);
+    }
+
+    @Override
+    public @Nullable ResourcePack load() {
+        final var resourcePackZipFile = new File(ModelEngineAPI.getAPI().getDataFolder(), "resource pack.zip");
+        if (!resourcePackZipFile.exists()) {
+            return null;
         }
+        return MinecraftResourcePackReader.minecraft().readFromZipFile(resourcePackZipFile);
     }
 }

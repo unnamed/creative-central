@@ -35,6 +35,8 @@ import team.unnamed.creative.ResourcePack;
 import team.unnamed.creative.central.CreativeCentral;
 import team.unnamed.creative.central.CreativeCentralProvider;
 import team.unnamed.creative.central.bukkit.command.MainCommand;
+import team.unnamed.creative.central.bukkit.external.ExternalResourcePackProvider;
+import team.unnamed.creative.central.bukkit.external.ExternalResourcePackProviders;
 import team.unnamed.creative.central.bukkit.listener.CreativeResourcePackStatusListener;
 import team.unnamed.creative.central.bukkit.listener.ResourcePackSendListener;
 import team.unnamed.creative.central.bukkit.listener.ResourcePackStatusListener;
@@ -61,12 +63,16 @@ import team.unnamed.creative.central.request.ResourcePackRequestSender;
 import team.unnamed.creative.central.server.CentralResourcePackServer;
 import team.unnamed.creative.central.server.ServeOptions;
 import team.unnamed.creative.metadata.pack.PackMeta;
+import team.unnamed.creative.resources.MergeStrategy;
 import team.unnamed.creative.serialize.minecraft.MinecraftResourcePackReader;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 
 import static java.util.Objects.requireNonNull;
@@ -117,13 +123,8 @@ public final class CreativeCentralPlugin extends JavaPlugin implements CreativeC
         // register service providers
         registerService();
 
-        Bukkit.getScheduler().runTaskLater(this, () -> {
-            this.generate().whenComplete((pack, throwable) -> {
-                if (throwable != null) {
-                    getLogger().log(Level.SEVERE, "Error while generating resource pack", throwable);
-                }
-            });
-        }, 1L);
+        // generate the resource-pack for the first time
+        generateFirstLoad();
     }
 
     public Monitor<Configuration> config() {
@@ -176,6 +177,79 @@ public final class CreativeCentralPlugin extends JavaPlugin implements CreativeC
                 getLogger().info("Successfully started the resource-pack server, listening on port " + port);
             } catch (IOException e) {
                 getLogger().log(Level.SEVERE, "Failed to open the resource pack server", e);
+            }
+        }
+    }
+
+    private void generateFirstLoad() {
+        final var allProviders = ExternalResourcePackProviders.get();
+        final var awaitingProviders = new ArrayList<ExternalResourcePackProvider>(allProviders.length);
+
+        for (final var provider : allProviders) {
+            if (Bukkit.getPluginManager().getPlugin(provider.pluginName()) == null) {
+                continue;
+            }
+
+            getLogger().info("Found " + provider.pluginName() + ", registering as an external resource pack provider...");
+
+            final AtomicBoolean generateCalledByChangeOnThisProvider = new AtomicBoolean(false);
+
+            eventBus.listen(this, ResourcePackGenerateEvent.class, event -> {
+                final var externalResourcePack = provider.load();
+                if (externalResourcePack != null) {
+                    getLogger().info("Merging resource pack from external provider: " + provider.pluginName());
+                    event.resourcePack().merge(externalResourcePack, MergeStrategy.mergeAndKeepFirstOnError());
+                } else {
+                    getLogger().warning("Couldn't load resource pack from external provider: " + provider.pluginName() + ": Not found");
+                }
+            });
+
+            if (provider.awaitOnStart()) {
+                awaitingProviders.add(provider);
+            }
+        }
+
+        if (awaitingProviders.isEmpty()) {
+            // do not wait for anything
+            Bukkit.getScheduler().runTaskLater(this, () -> {
+                this.generate().whenComplete((pack, throwable) -> {
+                    if (throwable != null) {
+                        getLogger().log(Level.SEVERE, "Error while generating resource pack", throwable);
+                    }
+                });
+            }, 1L);
+        } else  {
+            final var awaitingResourcePackCountDown = new AtomicInteger(awaitingProviders.size());
+            for (final var provider : awaitingProviders) {
+                provider.listenForChanges(this, () -> {
+                    synchronized (awaitingResourcePackCountDown) {
+                        final boolean generatePack;
+
+                        if (awaitingResourcePackCountDown.get() == 0) {
+                            // this means that the change on this provider was made
+                            // AFTER the first generation
+                            generatePack = true;
+                        } else {
+                            // this means that the change on this provider was made
+                            // DURING the first generation
+                            getLogger().info(provider.pluginName() + " resource-pack loaded, importing into ours...");
+
+                            // will be true if this is the last provider to be loaded
+                            generatePack = awaitingResourcePackCountDown.decrementAndGet() == 0;
+                        }
+
+                        if (generatePack) {
+                            getLogger().info("All external resource-packs loaded, generating our resource-pack...");
+                            Bukkit.getScheduler().runTaskLater(this, () -> {
+                                this.generate().whenComplete((pack, throwable) -> {
+                                    if (throwable != null) {
+                                        getLogger().log(Level.SEVERE, "Error while generating resource pack", throwable);
+                                    }
+                                });
+                            }, 1L);
+                        }
+                    }
+                });
             }
         }
     }

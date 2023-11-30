@@ -27,18 +27,44 @@ import dev.lone.itemsadder.api.Events.ItemsAdderPackCompressedEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import team.unnamed.creative.ResourcePack;
 import team.unnamed.creative.serialize.minecraft.MinecraftResourcePackReader;
 
 import java.io.File;
 
-public final class ItemsAdderResourcePack implements Listener {
-    @EventHandler
-    public void onCompressed(final @NotNull ItemsAdderPackCompressedEvent event) {
-        final var itemsAdderPlugin = Bukkit.getPluginManager().getPlugin("ItemsAdder");
-        final var resourcePackZipFile =  new File(itemsAdderPlugin.getDataFolder(), "output/generated.zip");
-        final var resourcePack = MinecraftResourcePackReader.minecraft().readFromZipFile(resourcePackZipFile);
+import static java.util.Objects.requireNonNull;
 
-        // todo: merge with resource pack
+public final class ItemsAdderResourcePackProvider implements ExternalResourcePackProvider {
+    @Override
+    public @NotNull String pluginName() {
+        return "ItemsAdder";
+    }
+
+    @Override
+    public void listenForChanges(final @NotNull Plugin plugin, final @NotNull Runnable changeListener) {
+        requireNonNull(plugin, "plugin");
+        requireNonNull(changeListener, "changeListener");
+        Bukkit.getPluginManager().registerEvents(new Listener() {
+            @EventHandler
+            public void onPackCompressed(final ItemsAdderPackCompressedEvent event) {
+                changeListener.run();
+            }
+        }, plugin);
+    }
+
+    @Override
+    public @Nullable ResourcePack load() {
+        final var itemsAdderPlugin = Bukkit.getPluginManager().getPlugin(pluginName());
+        if (itemsAdderPlugin == null) {
+            return null;
+        }
+        final var resourcePackZipFile =  new File(itemsAdderPlugin.getDataFolder(), "output/generated.zip");
+        if (!resourcePackZipFile.exists()) {
+            return null;
+        }
+        return MinecraftResourcePackReader.minecraft().readFromZipFile(resourcePackZipFile);
     }
 }
