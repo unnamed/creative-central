@@ -7,6 +7,7 @@ rootProject.name = "creative-central-parent"
 includePrefixed("api")
 includePrefixed("common")
 includePrefixed("bukkit")
+includePrefixed("velocity")
 //includePrefixed("minestom")
 
 fun includePrefixed(name: String) {
