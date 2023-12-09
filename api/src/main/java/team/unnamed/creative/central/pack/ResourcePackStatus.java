@@ -33,7 +33,6 @@ import team.unnamed.creative.central.request.ResourcePackRequest;
  * @since 1.0.0
  */
 public enum ResourcePackStatus {
-
     /**
      * Means that the player just accepted the server's
      * resource-pack.
@@ -45,16 +44,23 @@ public enum ResourcePackStatus {
      * server's resource-pack and just joined the server.
      * (they are not asked twice)</p>
      *
+     * <p>Note that this status <b>is not terminal</b> and
+     * a next status can be sent to the server.</p>
+     *
      * @since 1.0.0
      */
     ACCEPTED,
 
     /**
      * Means that the player just finished loading the
-     * server's resource-pack.
+     * server's resource-pack, and it has been applied
+     * successfully.
      *
      * <p>Commonly sent a little bit after the
      * {@link ResourcePackStatus#ACCEPTED} status is sent</p>
+     *
+     * <p>Note that this status <b>is terminal</b> and
+     * no more statuses will be sent to the server.</p>
      *
      * @since 1.0.0
      */
@@ -62,7 +68,10 @@ public enum ResourcePackStatus {
 
     /**
      * Means that the player declined the server's
-     * resource-pack.
+     * resource-pack. This status is instantly sent if
+     * the player clicks the 'Reject' button when they
+     * are asked to use the server's resource-pack, or
+     * if the resource-pack is disabled for this server.
      *
      * <p>Similar to {@link ResourcePackStatus#ACCEPTED},
      * this status is sent when the player clicks the
@@ -71,20 +80,88 @@ public enum ResourcePackStatus {
      * rejected the resource-pack and just joined the
      * server.</p>
      *
+     * <p>Note that this status <b>is terminal</b> and
+     * no more statuses will be sent to the server.</p>
+     *
      * @since 1.0.0
      */
     DECLINED,
 
     /**
-     * Means that the player failed to download the
-     * server's resource-pack.
+     * Means that the player failed to <b>download</b> the
+     * server's resource-pack from the received URL. This
+     * status can be sent after the {@link #ACCEPTED}
+     * status.
      *
-     * <p>This could mean multiple things like, an
-     * invalid URL was sent, or an invalid resource-pack
-     * was sent.</p>
+     * <p>Before Minecraft 1.20.3, this status can mean
+     * that an invalid URL was sent. But since Minecraft
+     * 1.20.3, the {@link #INVALID_URL} status is sent</p>
+     *
+     * <p>Note that this status <b>is terminal</b> and
+     * no more statuses will be sent to the server.</p>
+     *
+     * <p>Also note that this enum value is subject to a
+     * rename to "FAILED_DOWNLOAD"</p>
      *
      * @since 1.0.0
      */
-    FAILED
+    FAILED,
 
+    /**
+     * Means that the player has successfully downloaded
+     * the server's resource-pack. This status can be sent
+     * after the {@link #ACCEPTED} status.
+     *
+     * <p>Note that this status <b>is not terminal</b> and
+     * a next status can be sent to the server.</p>
+     *
+     * @since 1.0.0
+     * @sinceMinecraft 1.20.3
+     */
+    DOWNLOADED,
+
+    /**
+     * Means that an invalid URL was sent to the player,
+     * and the client rejected the resource-pack. This
+     * status is instantly sent if the client couldn't
+     * parse the resource-pack URL.
+     *
+     * <p>A valid resource-pack URL MUST be parseable by
+     * the {@link java.net.URL(String))} constructor and
+     * MUST have a 'HTTPS' or 'HTTP' protocol. In any other
+     * case, this status is received.</p>
+     *
+     * <p>Note that this status <b>is terminal</b> and
+     * no more statuses will be sent to the server.</p>
+     *
+     * @since 1.0.0
+     * @sinceMinecraft 1.20.3
+     */
+    INVALID_URL,
+
+    /**
+     * Means that the player failed to reload the server's
+     * resource-pack. This status can be sent after the
+     * {@link #DOWNLOADED} status.
+     *
+     * <p>Note that this status <b>is terminal</b> and
+     * no more statuses will be sent to the server.</p>
+     *
+     * @since 1.0.0
+     * @sinceMinecraft 1.20.3
+     */
+    FAILED_RELOAD,
+
+    /**
+     * Means that the player discarded the server's
+     * resource-pack. This status can be sent after the
+     * {@link #DOWNLOADED} status.
+     *
+     * <p>Note that this status <b>is terminal</b> and
+     * no more statuses will be sent to the server.</p>
+     *
+     * @since 1.0.0
+     * @sinceMinecraft 1.20.3
+     */
+    DISCARDED
 }
