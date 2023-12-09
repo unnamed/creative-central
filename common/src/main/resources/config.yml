@@ -87,53 +87,23 @@ feedback:
                 stay: 50
                 fade-out: 10
         -   message: '<#ff8df8>Creative Central <dark_gray>| <green>Info <dark_gray>| <gray>The resource pack has been downloaded correctly...'
-
     # Actions to perform when the player declines the resource pack
-    # These actions will be performed after the player clicks the "No" button
-    # in the resource pack download screen
     declined:
-        - kick: |-
-              
-              <#ff8df8><bold>Creative Central</bold></#ff8df8>
-              <dark_gray>Kicked from the server</dark_gray>
-              
-              <red>Resource Pack Rejected</red>
-
-              <gray>Accepting the server's resource-pack is
-              necessary to play in this server, you can't
-              play if you don't accept it.
-
-              <dark_gray>How can I fix this?
-              <dark_gray>1. <gray>Go back to your server list
-              <dark_gray>2. <gray>Select our server and click <i>'Edit'</i>
-              <dark_gray>3. <gray>Set the <i>'Server Resource Packs'</i> setting to
-              <i>'Enabled'</i> or <i>'Prompt'</i>
-
-              <dark_gray>That's it!
-              <#ff8df8>See you soon!
-              <dark_gray>- The server administrators -
-
+        - kick: You must accept the resource pack in order to play in this server.
     # Actions to perform when the player fails to download the resource pack
     failed:
-        - kick: |-
-              
-              <#ff8df8><bold>Creative Central</bold></#ff8df8>
-              <dark_gray>Kicked from the server</dark_gray>
-            
-              <red>Failed to download</red>
-            
-              <gray>Accepting the server's resource-pack is
-              necessary to play in this server, it seems
-              like your client failed to download it
-            
-              <dark_gray>How can I fix this?
-              <gray>Go back to your server list and re-join
-              our server, if the issue persists, feel free
-              to contact us.
-            
-              <dark_gray>That's it!
-              <#ff8df8>See you soon!
-              <dark_gray>- The server administrators -
+        - kick: Failed to download resource-pack, something failed. Please contact an administrator.
+    # Actions to perform when the player successfully downloads (but still not tries to apply) the resource-pack
+    downloaded: []
+    # Actions to perform when the player's client detects an invalid URL (our fault!)
+    invalid-url:
+        - kick: Failed to apply resource-pack, the resource-pack URL is invalid. Please contact an administrator.
+    # Actions to perform when the player's client fails to apply the resource-pack
+    failed-reload:
+        - kick: Failed to apply resource-pack, failed to reload your client's resource-packs.
+    # Actions to perform when the player's client fails to apply the resource-pack
+    discarded:
+        - kick: Failed to apply resource-pack, it has been discarded by your client.
 
 
 

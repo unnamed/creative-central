@@ -69,21 +69,15 @@ public class YamlConfigurationLoader {
             String statusKey = entry.getKey();
             ResourcePackStatus status;
 
-            switch (statusKey.toLowerCase(Locale.ROOT)) {
-                case "success":
-                    status = ResourcePackStatus.LOADED;
-                    break;
-                case "failed":
-                    status = ResourcePackStatus.FAILED;
-                    break;
-                case "accepted":
-                    status = ResourcePackStatus.ACCEPTED;
-                    break;
-                case "declined":
-                    status = ResourcePackStatus.DECLINED;
-                    break;
-                default:
+            final String enumStatusKey = statusKey.toUpperCase(Locale.ROOT).replace('-', '_');
+            if (enumStatusKey.equals("SUCCESS")) {
+                status = ResourcePackStatus.LOADED;
+            } else{
+                try {
+                    status = ResourcePackStatus.valueOf(enumStatusKey);
+                } catch (final IllegalArgumentException ignored) {
                     throw new IllegalArgumentException("Unknown status to give feedback: '" + statusKey + "'");
+                }
             }
 
             config.feedback().put(status, ActionParser.parse(entry.getValue()));
