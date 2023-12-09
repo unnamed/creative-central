@@ -25,10 +25,13 @@ package team.unnamed.creative.central.request;
 
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
 import static java.util.Objects.requireNonNull;
 
@@ -39,24 +42,35 @@ import static java.util.Objects.requireNonNull;
  * @since 1.0.0
  */
 public final class ResourcePackRequest {
-
+    private final UUID uuid;
     private final URI uri;
     private final String hash;
     private final boolean required;
     private final @Nullable Component prompt;
 
     private ResourcePackRequest(
+            final @NotNull UUID uuid,
             final @NotNull URI uri,
             final @NotNull String hash,
             final boolean required,
             final @Nullable Component prompt
     ) {
-        requireNonNull(uri, "url");
-        requireNonNull(hash, "hash");
-        this.uri = uri;
-        this.hash = hash;
+        this.uuid = requireNonNull(uuid, "uuid");
+        this.uri = requireNonNull(uri, "uri");
+        this.hash = requireNonNull(hash, "hash");
         this.required = required;
         this.prompt = prompt;
+    }
+
+    /**
+     * Returns this resource-pack UUID.
+     *
+     * @return The resource-pack UUID
+     * @since 1.0.0
+     * @sinceMinecraft 1.20.3
+     */
+    public @NotNull UUID uuid() {
+        return uuid;
     }
 
     /**
@@ -106,13 +120,35 @@ public final class ResourcePackRequest {
         return prompt;
     }
 
-    public static @NotNull ResourcePackRequest of(
-            final @NotNull URI uri,
-            final @NotNull String hash,
-            final boolean required,
-            final @Nullable Component prompt
-    ) {
-        return new ResourcePackRequest(uri, hash, required, prompt);
+    /**
+     * Creates a {@link ResourcePackRequest} with the given properties.
+     *
+     * @param uuid The UUID of the resource-pack
+     * @param uri The URI of the resource-pack
+     * @param hash The SHA-1 hash of the resource-pack
+     * @param required If the resource-pack is required
+     * @param prompt The prompt message
+     * @return The created {@link ResourcePackRequest}
+     */
+    public static @NotNull ResourcePackRequest of(final @NotNull UUID uuid, final @NotNull URI uri, final @NotNull String hash, final boolean required, final @Nullable Component prompt) {
+        return new ResourcePackRequest(uuid, uri, hash, required, prompt);
+    }
+
+    /**
+     * Creates a {@link ResourcePackRequest} with the given properties,
+     * using the {@link URI} as the {@link UUID} for the resource-pack.
+     *
+     * @param uri The URI of the resource-pack
+     * @param hash The SHA-1 hash of the resource-pack
+     * @param required If the resource-pack is required
+     * @param prompt The prompt message
+     * @return The created {@link ResourcePackRequest}
+     * @deprecated Use {@link #of(UUID, URI, String, boolean, Component)} instead
+     */
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.0.0")
+    public static @NotNull ResourcePackRequest of(final @NotNull URI uri, final @NotNull String hash, final boolean required, final @Nullable Component prompt) {
+        return new ResourcePackRequest(UUID.nameUUIDFromBytes(uri.toString().getBytes(StandardCharsets.UTF_8)), uri, hash, required, prompt);
     }
 
     @Deprecated
@@ -137,13 +173,27 @@ public final class ResourcePackRequest {
     }
 
     public static final class Builder {
-
+        private UUID uuid;
         private URI uri;
         private String hash;
         private boolean required;
         private @Nullable Component prompt;
 
         private Builder() {
+        }
+
+        /**
+         * Sets the UUID of the resource-pack.
+         *
+         * @param uuid The UUID of the resource-pack
+         * @return This builder
+         * @since 1.0.0
+         * @sinceMinecraft 1.20.3
+         */
+        @Contract("_ -> this")
+        public @NotNull Builder uuid(final @NotNull UUID uuid) {
+            this.uuid = requireNonNull(uuid, "uuid");
+            return this;
         }
 
         @Deprecated
@@ -174,7 +224,12 @@ public final class ResourcePackRequest {
         }
 
         public ResourcePackRequest build() {
-            return new ResourcePackRequest(uri, hash, required, prompt);
+            if (uuid == null) {
+                requireNonNull(uri, "uri");
+                // backwards compatibility
+                uuid = UUID.nameUUIDFromBytes(uri.toString().getBytes(StandardCharsets.UTF_8));
+            }
+            return new ResourcePackRequest(uuid, uri, hash, required, prompt);
         }
 
 
