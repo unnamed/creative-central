@@ -49,7 +49,10 @@ public class ResourcePackStatusListener implements Listener {
             case DECLINED -> ResourcePackStatus.DECLINED;
             case FAILED_DOWNLOAD -> ResourcePackStatus.FAILED;
             case SUCCESSFULLY_LOADED -> ResourcePackStatus.LOADED;
-            // todo: !
+            case DOWNLOADED -> ResourcePackStatus.DOWNLOADED;
+            case INVALID_URL -> ResourcePackStatus.INVALID_URL;
+            case FAILED_RELOAD -> ResourcePackStatus.FAILED_RELOAD;
+            case DISCARDED -> ResourcePackStatus.DISCARDED;
         };
 
         central.eventBus().call(ResourcePackStatusEvent.class, new ResourcePackStatusEvent(player, status));
