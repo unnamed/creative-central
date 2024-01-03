@@ -13,7 +13,7 @@ dependencies {
     implementation(libs.creative.serializer.minecraft)
     implementation(project(":creative-central-api"))
     implementation(project(":creative-central-common"))
-    compileOnly("io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
 
     compileOnly("com.ticxo.modelengine:ModelEngine:R4.0.3") // Model Engine
     compileOnly("com.github.LoneDev6:API-ItemsAdder:3.6.1") // ItemsAdder
