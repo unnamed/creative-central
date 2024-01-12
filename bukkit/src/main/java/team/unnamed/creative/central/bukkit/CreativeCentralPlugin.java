@@ -325,6 +325,7 @@ public final class CreativeCentralPlugin extends JavaPlugin implements CreativeC
         }
 
         if (location != null) {
+            getLogger().info("Exported resource pack to " + location.uri() + " (" + location.hash() + ")");
             serveOptions.request(ResourcePackRequest.of(
                     location.uri(),
                     location.hash(),

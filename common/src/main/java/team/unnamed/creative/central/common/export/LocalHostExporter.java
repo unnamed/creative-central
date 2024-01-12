@@ -67,8 +67,6 @@ public class LocalHostExporter implements ResourcePackExporter {
                 pack.hash()
         ));
 
-        logger.info("Resource-pack hosted, available in: " + uri.toString());
-
         return ResourcePackLocation.of(uri, pack.hash());
     }
 
