@@ -25,6 +25,9 @@ package team.unnamed.creative.central.common.util;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 public final class HttpUtil {
     public static final String LINE_FEED = "\r\n";
 
@@ -34,5 +37,13 @@ public final class HttpUtil {
 
     public static @NotNull String generateBoundary() {
         return "----------------UnnamedBoundary" + Long.toHexString(System.nanoTime());
+    }
+
+    public static @NotNull URL url(final @NotNull String url) {
+        try {
+            return new URL(url);
+        } catch (final MalformedURLException e) {
+            throw new IllegalArgumentException("Invalid URL: " + url, e);
+        }
     }
 }

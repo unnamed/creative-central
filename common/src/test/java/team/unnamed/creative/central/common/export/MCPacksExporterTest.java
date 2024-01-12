@@ -46,7 +46,7 @@ class MCPacksExporterTest {
         resourcePack.packMeta(8, "Test resource-pack!");
 
         // upload the resource-pack to MCPacks
-        ResourcePackLocation location = new MCPacksHttpExporter(Logger.getAnonymousLogger())
+        ResourcePackLocation location = new MCPacksHttpExporter()
                 .export(resourcePack);
 
         assertNotNull(location, "Location should not be null");

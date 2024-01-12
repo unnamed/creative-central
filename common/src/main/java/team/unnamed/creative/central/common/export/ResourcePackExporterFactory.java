@@ -44,7 +44,7 @@ public final class ResourcePackExporterFactory {
         switch (key.toLowerCase(Locale.ROOT)) {
             case "mcpacks":
             case "mc-packs":
-                return new MCPacksHttpExporter(logger);
+                return new MCPacksHttpExporter();
             case "localhost":
                 return new LocalHostExporter(server, logger);
             case "file":
