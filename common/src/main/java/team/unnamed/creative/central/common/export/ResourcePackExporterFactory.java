@@ -41,10 +41,21 @@ public final class ResourcePackExporterFactory {
             CentralResourcePackServer server,
             Logger logger
     ) {
-        switch (key.toLowerCase(Locale.ROOT)) {
+        key = key.toLowerCase(Locale.ROOT).trim();
+
+        if (key.startsWith("polymath ")) {
+            final String[] args = key.substring("polymath ".length()).split(" ", 2);
+            if (args.length != 2) {
+                throw new IllegalArgumentException("Invalid polymath arguments provided: '" + key
+                        + "'. Correct format: 'polymath <url> <secret>'");
+            }
+            return new PolymathExporter(args[0], args[1]);
+        }
+
+        switch (key) {
             case "mcpacks":
             case "mc-packs":
-                return new MCPacksHttpExporter(logger);
+                return new MCPacksHttpExporter();
             case "localhost":
                 return new LocalHostExporter(server, logger);
             case "file":
@@ -54,10 +65,11 @@ public final class ResourcePackExporterFactory {
             default:
                 throw new IllegalArgumentException(
                     "Unknown exporter method: '" + key + "'. Possible values:\n"
-                    + "    - 'mcpacks':   (hosted) Exports the resource-pack to MCPacks\n"
-                    + "    - 'localhost': (hosted) Exports the resource-pack to a local server\n"
-                    + "    - 'file':      (non-hosted) Exports the resource-pack to a file\n"
-                    + "    - 'folder':    (non-hosted) Exports the resource-pack to a folder\n"
+                    + "    - 'mcpacks':                 (hosted) Exports the resource-pack to MCPacks\n"
+                    + "    - 'localhost':               (hosted) Exports the resource-pack to a local server\n"
+                    + "    - 'polymath <url> <secret>': (hosted) Exports the reosurce-pack to a Polymath server\n"
+                    + "    - 'file':                    (non-hosted) Exports the resource-pack to a file\n"
+                    + "    - 'folder':                  (non-hosted) Exports the resource-pack to a folder\n"
                 );
         }
     }

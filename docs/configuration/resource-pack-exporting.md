@@ -27,6 +27,20 @@ export:
 Please consider [donating to MCPacks](https://mc-packs.net/) if you use their
 free hosting service!
 
+### Polymath
+`creative-central` can automatically upload the generated resource-pack to a Polymath
+server, the Oraxen's resource-pack hosting server.
+
+To make `creative-central` do this, open `config.yml` and set `export.type` to
+`polymath <url> <secret>`, replacing *\<url\>* by the desired Polymath server's
+URL and *\<secret\>* by the Polymath server's secret.
+
+Example:
+```yaml
+export:
+  type: 'polymath https://mypolymathserver.com/ oraxen'
+```
+
 ### Localhost (Self hosting)
 We can set up a resource-pack server, on your server!
 

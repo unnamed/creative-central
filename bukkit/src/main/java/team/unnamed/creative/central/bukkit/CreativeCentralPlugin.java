@@ -23,6 +23,7 @@
  */
 package team.unnamed.creative.central.bukkit;
 
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
@@ -91,6 +92,8 @@ public final class CreativeCentralPlugin extends JavaPlugin implements CreativeC
     public void onEnable() {
         Configuration config = YamlConfigurationLoader.load(PluginResources.get(this, "config.yml"));
         this.configurationMonitor = Monitor.monitor(config);
+
+        new Metrics(this, 20718); // metrics (bstats.org)
 
         serveOptions = new ServeOptions();
         eventBus = new EventBusImpl<>(Plugin.class, EventExceptionHandler.logging(getLogger()));
@@ -322,6 +325,7 @@ public final class CreativeCentralPlugin extends JavaPlugin implements CreativeC
         }
 
         if (location != null) {
+            getLogger().info("Exported resource pack to " + location.uri() + " (" + location.hash() + ")");
             serveOptions.request(ResourcePackRequest.of(
                     location.uri(),
                     location.hash(),

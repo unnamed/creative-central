@@ -25,6 +25,17 @@ Pack:
 <!--@formatter:on-->
 
 creative-central can upload resource-packs too, so this shouldn't be a problem.
+If you are using Polymath hosting, you can also configure `creative-central` to
+upload the resource-pack to that Polymath server.
+
+<!--@formatter:off-->
+```yaml
+# (creative-central's config.yml)
+export:
+  # e.g. 'polymath atlas.oraxen.com atlas'
+  type: 'polymath <server> <secret>'
+```
+<!--@formatter:on-->
 
 #### 2. Disable receive
 

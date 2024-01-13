@@ -33,24 +33,21 @@ import java.io.InputStream;
 import java.net.URI;
 import java.security.DigestOutputStream;
 import java.security.MessageDigest;
-import java.util.logging.Logger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-class MCPacksExporterTest {
-
+class PolymathExporterTest {
     // @Test // manually activate it
     void test() throws Exception {
-        ResourcePack resourcePack = ResourcePack.create();
+        final ResourcePack resourcePack = ResourcePack.resourcePack();
         resourcePack.packMeta(8, "Test resource-pack!");
 
         // upload the resource-pack to MCPacks
-        ResourcePackLocation location = new MCPacksHttpExporter()
+        ResourcePackLocation location = new PolymathExporter("atlas.oraxen.com", "oraxen")
                 .export(resourcePack);
 
         assertNotNull(location, "Location should not be null");
-        assertEquals("https://download.mc-packs.net/pack/7c708abe63955fefc2ff1fca614688874b9bd3f0.zip", location.uri().toString());
         assertEquals("7c708abe63955fefc2ff1fca614688874b9bd3f0", location.hash());
 
         // download the resource-pack from MCPacks
@@ -77,5 +74,4 @@ class MCPacksExporterTest {
         // check
         assertEquals("7c708abe63955fefc2ff1fca614688874b9bd3f0", hashString, "Downloaded hash should be the same as uploaded hash! ");
     }
-
 }

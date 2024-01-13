@@ -24,6 +24,7 @@
 package team.unnamed.creative.central.common.export;
 
 import team.unnamed.creative.ResourcePack;
+import team.unnamed.creative.central.common.util.HttpUtil;
 import team.unnamed.creative.central.export.ResourcePackExporter;
 import team.unnamed.creative.central.export.ResourcePackLocation;
 import team.unnamed.creative.serialize.minecraft.MinecraftResourcePackWriter;
@@ -32,14 +33,12 @@ import team.unnamed.creative.serialize.minecraft.fs.FileTreeWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.DigestOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.logging.Logger;
 import java.util.zip.ZipOutputStream;
 
 /**
@@ -50,50 +49,33 @@ import java.util.zip.ZipOutputStream;
  * upload the file
  */
 public class MCPacksHttpExporter implements ResourcePackExporter {
-
-    private static final String USER_AGENT = "creative-central";
-    private static final String FILE_NAME = "creative-resource-pack.zip";
-
-    private static final String UPLOAD_URL = "https://mc-packs.net/";
+    private static final URL UPLOAD_URL = HttpUtil.url("https://mc-packs.net/");
     private static final String DOWNLOAD_URL_TEMPLATE = "https://download.mc-packs.net/pack/%HASH%.zip";
-
-    private static final String BOUNDARY = "UnnamedBoundary";
-    private static final String LINE_FEED = "\r\n";
-
-    private final Logger logger;
-    private final URL url;
-
-    public MCPacksHttpExporter(Logger logger) {
-        this.logger = logger;
-        try {
-            this.url = new URL(UPLOAD_URL);
-        } catch (MalformedURLException e) {
-            throw new IllegalStateException("Malformed url constant: " + UPLOAD_URL, e);
-        }
-    }
 
     @Override
     public ResourcePackLocation export(ResourcePack resourcePack) throws IOException {
 
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        HttpURLConnection connection = (HttpURLConnection) UPLOAD_URL.openConnection();
 
         connection.setConnectTimeout(10000);
 
         connection.setRequestMethod("POST");
         connection.setDoOutput(true);
 
-        connection.setRequestProperty("User-Agent", USER_AGENT);
+        final String multipartBoundary = HttpUtil.generateBoundary();
+
+        connection.setRequestProperty("User-Agent", "creative-central");
         connection.setRequestProperty("Charset", "utf-8");
-        connection.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + BOUNDARY);
+        connection.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + multipartBoundary);
 
         String hashString;
 
         // write http request body
         try (OutputStream output = connection.getOutputStream()) {
             output.write((
-                    "--" + BOUNDARY + LINE_FEED
-                    + "Content-Disposition: form-data; name=\"file\"; filename=\"" + FILE_NAME + "\"" + LINE_FEED
-                    + "Content-Type: application/zip" + LINE_FEED + LINE_FEED
+                    "--" + multipartBoundary + HttpUtil.LINE_FEED
+                    + "Content-Disposition: form-data; name=\"file\"; filename=\"pack.zip\"" + HttpUtil.LINE_FEED
+                    + "Content-Type: application/zip" + HttpUtil.LINE_FEED + HttpUtil.LINE_FEED
             ).getBytes(StandardCharsets.UTF_8));
 
             MessageDigest digest;
@@ -125,14 +107,13 @@ public class MCPacksHttpExporter implements ResourcePackExporter {
 
             hashString = hashBuilder.toString();
 
-            output.write((LINE_FEED + "--" + BOUNDARY + "--" + LINE_FEED).getBytes(StandardCharsets.UTF_8));
+            output.write((HttpUtil.LINE_FEED + "--" + multipartBoundary + "--" + HttpUtil.LINE_FEED).getBytes(StandardCharsets.UTF_8));
         }
 
         // execute request and close, no response expected
         connection.getInputStream().close();
 
         String url = DOWNLOAD_URL_TEMPLATE.replace("%HASH%", hashString);
-        logger.info("Uploaded resource-pack to: " + url);
 
         return ResourcePackLocation.of(URI.create(url), hashString);
     }

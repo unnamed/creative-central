@@ -18,6 +18,8 @@ dependencies {
     compileOnly("com.ticxo.modelengine:ModelEngine:R4.0.3") // Model Engine
     compileOnly("com.github.LoneDev6:API-ItemsAdder:3.6.1") // ItemsAdder
     compileOnly("io.th0rgal:oraxen:1.164.0") // oraxen
+
+    implementation("org.bstats:bstats-bukkit:3.0.2") // bstats
 }
 
 java {
@@ -35,6 +37,9 @@ tasks {
             exclude(dependency("net.kyori:adventure-key"))
             exclude(dependency("net.kyori:examination-api"))
             exclude(dependency("net.kyori:examination-string"))
+
+            // relocate bstats
+            relocate("org.bstats", "team.unnamed.creative.central.bukkit.lib.bstats")
         }
     }
 }

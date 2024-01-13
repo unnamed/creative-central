@@ -124,6 +124,10 @@ export:
     # |     extra configuration is required (you need to open a new port in
     # |     your server and enable the 'localhost' setting, see below)
     # |
+    # |--> 'polymath <url> <secret>' (hosted)
+    # |     Uploads the generated resource pack to a Polymath server. (Oraxen's
+    # |     resource pack server)
+    # |
     # |--> 'file' (non hosted)
     # |     Writes the generated resource pack to a ZIP file in the plugin
     # |     folder (/plugins/creative-central/output.zip)
