@@ -9,6 +9,16 @@ java {
     withSourcesJar()
 }
 
+tasks {
+    javadoc {
+        isFailOnError = false
+        (options as StandardJavadocDocletOptions).run {
+            tags("sinceMinecraft:a:Since Minecraft:")
+            tags("sincePackFormat:a:Since Resource-Pack Format:")
+        }
+    }
+}
+
 val repositoryName: String by project
 val snapshotRepository: String by project
 val releaseRepository: String by project
