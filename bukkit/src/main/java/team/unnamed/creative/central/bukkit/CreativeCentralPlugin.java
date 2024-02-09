@@ -266,8 +266,6 @@ public final class CreativeCentralPlugin extends JavaPlugin implements CreativeC
 
         Configuration config = configurationMonitor.get();
 
-        getLogger().info("Generating resource-pack...");
-
         File resourcesFolder = new File(getDataFolder(), "resources");
         if (!resourcesFolder.exists()) {
             resourcesFolder.mkdirs();
@@ -280,8 +278,6 @@ public final class CreativeCentralPlugin extends JavaPlugin implements CreativeC
                 try (InputStream icon = getResource("resources/pack.png")) {
                     Streams.pipeToFile(icon, new File(resourcesFolder, "pack.png"));
                 }
-
-                getLogger().info("Successfully generated resources folder");
             } catch (IOException e) {
                 getLogger().log(Level.WARNING, "Failed to copy pack.mcmeta and pack.png files" +
                         " inside the resources folder", e);
@@ -305,8 +301,6 @@ public final class CreativeCentralPlugin extends JavaPlugin implements CreativeC
                 );
             }
         }
-
-        getLogger().info("Successfully loaded resources from 'resources' folder");
 
         eventBus.call(ResourcePackGenerateEvent.class, new ResourcePackGenerateEvent(resourcePack));
         getLogger().info("The resource pack has been generated successfully");
