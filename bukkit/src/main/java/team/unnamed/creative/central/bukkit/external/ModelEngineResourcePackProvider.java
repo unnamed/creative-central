@@ -23,9 +23,8 @@
  */
 package team.unnamed.creative.central.bukkit.external;
 
-import com.ticxo.modelengine.api.ModelEngineAPI;
 import com.ticxo.modelengine.api.events.ModelRegistrationEvent;
-import com.ticxo.modelengine.api.generator.ModelGenerator;
+import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
@@ -35,6 +34,7 @@ import team.unnamed.creative.ResourcePack;
 import team.unnamed.creative.serialize.minecraft.MinecraftResourcePackReader;
 
 import java.io.File;
+import java.lang.reflect.Method;
 
 import static java.util.Objects.requireNonNull;
 
@@ -54,11 +54,30 @@ public final class ModelEngineResourcePackProvider implements ExternalResourcePa
     public void listenForChanges(final @NotNull Plugin plugin, final @NotNull Runnable changeListener) {
         requireNonNull(plugin, "plugin");
         requireNonNull(changeListener, "changeListener");
+
+        // We do this to support both ModelEngine3 and ModelEngine4 :(
+        final Method getPhaseMethod;
+        try {
+            getPhaseMethod = ModelRegistrationEvent.class.getDeclaredMethod("getPhase");
+            getPhaseMethod.setAccessible(true);
+        } catch (final ReflectiveOperationException e) {
+            throw new RuntimeException("Failed to get ModelRegistrationEvent#getPhase method", e);
+        }
+
         plugin.getServer().getPluginManager().registerEvents(new Listener() {
             @EventHandler
             public void onModelRegistration(final @NotNull ModelRegistrationEvent event) {
-                final var phase = event.getPhase();
-                if (phase == ModelGenerator.Phase.POST_ZIPPING) {
+                final Enum<?> phase;
+                try {
+                    phase = (Enum<?>) getPhaseMethod.invoke(event);
+                } catch (final ReflectiveOperationException e) {
+                    throw new IllegalStateException("Failed to get phase from ModelRegistrationEvent", e);
+                }
+
+                final var phaseName = phase.name();
+
+                // It's POST_ZIPPING for ME4, and FINAL for ME3
+                if (phaseName.equals("POST_ZIPPING") || phaseName.equals("FINAL")) {
                     changeListener.run();
                 }
             }
@@ -67,7 +86,13 @@ public final class ModelEngineResourcePackProvider implements ExternalResourcePa
 
     @Override
     public @Nullable ResourcePack load() {
-        final var resourcePackZipFile = new File(ModelEngineAPI.getAPI().getDataFolder(), "resource pack.zip");
+        final var modelEngine = Bukkit.getPluginManager().getPlugin(pluginName());
+        if (modelEngine == null) {
+            // Should never happen
+            return null;
+        }
+
+        final var resourcePackZipFile = new File(modelEngine.getDataFolder(), "resource pack.zip");
         if (!resourcePackZipFile.exists()) {
             return null;
         }
