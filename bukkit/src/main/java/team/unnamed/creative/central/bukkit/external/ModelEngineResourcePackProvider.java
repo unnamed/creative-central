@@ -76,8 +76,8 @@ public final class ModelEngineResourcePackProvider implements ExternalResourcePa
 
                 final var phaseName = phase.name();
 
-                // It's POST_ZIPPING for ME4, and FINAL for ME3
-                if (phaseName.equals("POST_ZIPPING") || phaseName.equals("FINAL")) {
+                // It's FINISHED for ME4, and FINAL for ME3
+                if (phaseName.equals("FINISHED") || phaseName.equals("FINAL")) {
                     changeListener.run();
                 }
             }
