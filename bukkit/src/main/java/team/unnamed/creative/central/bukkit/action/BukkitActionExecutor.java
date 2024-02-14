@@ -37,9 +37,20 @@ import team.unnamed.creative.central.common.action.TitleAction;
 public final class BukkitActionExecutor implements ActionExecutor<Player> {
     private static final ActionExecutor<Player> INSTANCE = new BukkitActionExecutor();
 
+    private static final boolean PAPER;
     private static final boolean ARE_TITLE_TIMES_AVAILABLE;
 
     static {
+        boolean paper = false;
+        try {
+            Player.class.getMethod("kick", Component.class);
+            Player.class.getMethod("sendMessage", Component.class);
+            Player.class.getMethod("showTitle", Title.class);
+            paper = true;
+        } catch (final NoSuchMethodException ignored) {
+        }
+        PAPER = paper;
+
         boolean areTitleTimesAvailable = false;
         try {
             Player.class.getMethod("sendTitle", String.class, String.class, int.class, int.class, int.class);
@@ -55,27 +66,41 @@ public final class BukkitActionExecutor implements ActionExecutor<Player> {
     @Override
     @SuppressWarnings({"deprecation", "UsagesOfObsoleteApi"}) // Spigot!
     public void execute(Action action, Player player) {
-        if (action instanceof MessageAction) {
-            player.sendMessage(toLegacy(((MessageAction) action).message()));
+        if (action instanceof MessageAction messageAction) {
+            final var message = messageAction.message();
+            if (PAPER) {
+                player.sendMessage(message);
+            } else {
+                player.sendMessage(toLegacy(message));
+            }
         } else if (action instanceof TitleAction) {
             final Title title = ((TitleAction) action).title();
-            final Title.Times times = title.times();
-            if (times == null || !ARE_TITLE_TIMES_AVAILABLE) {
-                player.sendTitle(
-                        toLegacy(title.title()),
-                        toLegacy(title.subtitle())
-                );
+            if (PAPER) {
+                player.showTitle(title);
             } else {
-                player.sendTitle(
-                        toLegacy(title.title()),
-                        toLegacy(title.subtitle()),
-                        (int) times.fadeIn().getSeconds() * 20,
-                        (int) times.stay().getSeconds() * 20,
-                        (int) times.fadeOut().getSeconds() * 20
-                );
+                final Title.Times times = title.times();
+                if (times == null || !ARE_TITLE_TIMES_AVAILABLE) {
+                    player.sendTitle(
+                            toLegacy(title.title()),
+                            toLegacy(title.subtitle())
+                    );
+                } else {
+                    player.sendTitle(
+                            toLegacy(title.title()),
+                            toLegacy(title.subtitle()),
+                            (int) times.fadeIn().getSeconds() * 20,
+                            (int) times.stay().getSeconds() * 20,
+                            (int) times.fadeOut().getSeconds() * 20
+                    );
+                }
             }
         } else if (action instanceof KickAction kickAction) {
-            player.kickPlayer(toLegacy(kickAction.reason()));
+            final Component reason = kickAction.reason();
+            if (PAPER) {
+                player.kick(reason);
+            } else {
+                player.kickPlayer(toLegacy(reason));
+            }
         } else {
             throw new IllegalArgumentException("Unknown action type: '" + action + "'");
         }
