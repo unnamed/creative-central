@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * Utility class for working with
@@ -85,7 +86,24 @@ public final class Streams {
             InputStream input,
             File outputFile
     ) throws IOException {
-        try (OutputStream output = new BufferedOutputStream(Files.newOutputStream(outputFile.toPath()))) {
+        pipeToFile(input, outputFile.toPath());
+    }
+
+    /**
+     * Reads and writes the data from the
+     * given {@code input} to the given {@code outputFile}
+     *
+     * <p>Note that this method doesn't close
+     * the given input stream</p>
+     *
+     * @throws IOException If an error occurs while
+     * reading or writing the data
+     */
+    public static void pipeToFile(
+            InputStream input,
+            Path outputFile
+    ) throws IOException {
+        try (OutputStream output = new BufferedOutputStream(Files.newOutputStream(outputFile))) {
             pipe(input, output);
         }
     }

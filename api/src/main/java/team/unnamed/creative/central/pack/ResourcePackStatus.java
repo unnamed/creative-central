@@ -127,7 +127,7 @@ public enum ResourcePackStatus {
      * parse the resource-pack URL.
      *
      * <p>A valid resource-pack URL MUST be parseable by
-     * the {@link java.net.URL(String))} constructor and
+     * the {@link java.net.URL#URL(String)} constructor and
      * MUST have a 'HTTPS' or 'HTTP' protocol. In any other
      * case, this status is received.</p>
      *
