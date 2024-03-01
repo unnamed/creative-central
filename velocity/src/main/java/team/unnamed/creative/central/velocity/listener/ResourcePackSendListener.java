@@ -24,7 +24,7 @@
 package team.unnamed.creative.central.velocity.listener;
 
 import com.velocitypowered.api.event.Subscribe;
-import com.velocitypowered.api.event.connection.PostLoginEvent;
+import com.velocitypowered.api.event.player.ServerPostConnectEvent;
 import com.velocitypowered.api.proxy.Player;
 import net.kyori.adventure.util.Ticks;
 import team.unnamed.creative.central.request.ResourcePackRequest;
@@ -39,11 +39,16 @@ public class ResourcePackSendListener {
         this.plugin = plugin;
     }
 
+    @SuppressWarnings("UnstableApiUsage")
     @Subscribe
-    public void onJoin(PostLoginEvent event) {
+    public void onJoin(ServerPostConnectEvent event) {
         ServeOptions options = plugin.serveOptions();
         if (!options.serve()) {
             // we don't send the resource pack on join
+            return;
+        }
+        if (event.getPreviousServer() != null) {
+            // we don't send the resource pack again
             return;
         }
 

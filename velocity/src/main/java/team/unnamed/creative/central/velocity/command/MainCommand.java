@@ -163,7 +163,7 @@ public class MainCommand implements SimpleCommand {
 
     private void send(CommandSource sender, String messageKey) {
         Component message = messageCache.computeIfAbsent(messageKey, k ->
-                Components.deserialize(central.rawConfig().node(k).getString(k)));
+                Components.deserialize(central.rawConfig().node((Object[]) k.split("\\.")).getString(k)));
         sender.sendMessage(message);
     }
 

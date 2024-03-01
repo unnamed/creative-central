@@ -25,9 +25,11 @@ package team.unnamed.creative.central.velocity.request;
 
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
+import com.velocitypowered.api.proxy.player.ResourcePackInfo;
 import team.unnamed.creative.central.request.ResourcePackRequest;
 import team.unnamed.creative.central.request.ResourcePackRequestSender;
 
+import java.util.Arrays;
 import java.util.function.BiConsumer;
 
 public final class VelocityResourcePackRequestSender implements ResourcePackRequestSender {
@@ -57,6 +59,12 @@ public final class VelocityResourcePackRequestSender implements ResourcePackRequ
             for (int i = 0; i < len; i += 2) {
                 hash[i / 2] = (byte) ((Character.digit(hs.charAt(i), 16) << 4)
                         + Character.digit(hs.charAt(i + 1), 16));
+            }
+
+            for (ResourcePackInfo rp : player.getAppliedResourcePacks()) {
+                if (rp.getId().equals(request.uuid()) && Arrays.equals(rp.getHash(), hash)) {
+                    player.removeResourcePacks(rp.getId());
+                }
             }
 
             player.sendResourcePackOffer(proxy.createResourcePackBuilder(request.uri().toString())
