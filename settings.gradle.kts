@@ -8,6 +8,7 @@ includePrefixed("api")
 includePrefixed("common")
 includePrefixed("bukkit")
 //includePrefixed("minestom")
+includePrefixed("velocity")
 
 fun includePrefixed(name: String) {
     val kebabName = name.replace(':', '-')
