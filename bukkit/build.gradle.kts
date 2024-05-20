@@ -1,5 +1,6 @@
 plugins {
     id("creative.dist-conventions")
+    id("xyz.jpenilla.run-paper") version "2.3.0"
 }
 
 repositories {
@@ -24,11 +25,17 @@ dependencies {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
+        languageVersion.set(JavaLanguageVersion.of(21))
     }
 }
 
 tasks {
+    compileJava {
+        options.release = 17
+    }
+    runServer {
+        minecraftVersion("1.20.6")
+    }
     shadowJar {
         dependencies {
             // all these dependencies are provided by the server
