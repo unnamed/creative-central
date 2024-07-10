@@ -9,5 +9,5 @@ dependencies {
 
     // -- provided by server or plugin implementations --
     compileOnly(libs.adventure.text.minimessage)
-    compileOnly("org.yaml:snakeyaml:2.0")
+    compileOnly("org.yaml:snakeyaml:2.2")
 }
