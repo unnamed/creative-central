@@ -25,6 +25,7 @@ package team.unnamed.creative.central.bukkit.external;
 
 import io.th0rgal.oraxen.api.OraxenPack;
 import io.th0rgal.oraxen.api.events.OraxenPackGeneratedEvent;
+import io.th0rgal.oraxen.api.events.OraxenPackPreUploadEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
@@ -53,11 +54,8 @@ public final class OraxenResourcePackProvider implements ExternalResourcePackPro
         requireNonNull(changeListener, "changeListener");
         plugin.getServer().getPluginManager().registerEvents(new Listener() {
             @EventHandler
-            public void onGenerated(final @NotNull OraxenPackGeneratedEvent event) {
-                // todo: change when Oraxen adds an event when they finished writing the pack
-                // at the moment, we have to wait 1 second to ensure that the pack is written
-                // (although it's not guaranteed)
-                plugin.getServer().getScheduler().runTaskLater(plugin, changeListener, 20L);
+            public void onGenerated(final @NotNull OraxenPackPreUploadEvent event) {
+                changeListener.run();
             }
         }, plugin);
     }
