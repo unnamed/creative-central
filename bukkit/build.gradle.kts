@@ -20,7 +20,7 @@ dependencies {
     compileOnly("com.github.LoneDev6:API-ItemsAdder:3.6.1") // ItemsAdder
     compileOnly("io.th0rgal:oraxen:1.178.0") // oraxen
 
-    implementation("org.bstats:bstats-bukkit:3.0.2") // bstats
+    implementation("org.bstats:bstats-bukkit:3.1.0") // bstats
 }
 
 java {
