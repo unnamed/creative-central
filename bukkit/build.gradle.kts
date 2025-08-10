@@ -1,6 +1,6 @@
 plugins {
     id("creative.dist-conventions")
-    id("xyz.jpenilla.run-paper") version "2.3.0"
+    id("xyz.jpenilla.run-paper") version "2.3.1"
 }
 
 repositories {
